@@ -75,7 +75,8 @@ if not os.path.exists(FEATURE_COLUMNS_PATH):
 model = joblib.load(MODEL_PATH)
 preprocessor = joblib.load(PREPROCESSOR_PATH)
 with open(FEATURE_COLUMNS_PATH, "r", encoding="utf-8") as f:
-    FEATURE_COLUMNS = json.load(f)
+    feature_info = json.load(f)
+    FEATURE_COLUMNS = feature_info["model_input_features"]
 
 # ---------------------------------------------------------------------------
 # Internal SHAP utilities – imported lazily to keep startup fast
@@ -163,7 +164,6 @@ def global_explain(output_dir: str = None, max_rows: int = 2000) -> str:
     shap.summary_plot(
         shap_values,
         X_test,
-        feature_names=FEATURE_COLUMNS,
         plot_type="dot",
         show=False,
     )
@@ -210,9 +210,9 @@ def local_explain(instance: dict, output_dir: str = None) -> str:
     filename = os.path.join(output_dir, f"local_shap_{uuid.uuid4().hex[:8]}.png")
 
     plt.figure(figsize=(8, 4))
+    expl = shap.Explanation(values=shap_values[0], data=X_processed[0], base_values=explainer.expected_value)
     shap.plots.waterfall(
-        shap.Explanation(values=shap_values[0], base_value=explainer.expected_value, data=X_processed[0]),
-        feature_names=FEATURE_COLUMNS,
+        expl,
         show=False,
     )
     plt.tight_layout()

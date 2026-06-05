@@ -3,7 +3,10 @@
 It loads the cleaned dataset, performs preprocessing, trains the model,
 computes evaluation metrics, and saves the model and preprocessor artifacts.
 """
-import os
+import sys, os
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.append(PROJECT_ROOT)
+sys.path.append(os.path.join(PROJECT_ROOT, "src"))
 import json
 import joblib
 import pandas as pd
@@ -14,7 +17,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from xgboost import XGBRegressor
 
-from .config import (
+from training.config import (
     CLEAN_DATA_PATH,
     FEATURE_METADATA_PATH,
     XGB_MODEL_PATH,
@@ -49,7 +52,7 @@ def preprocess(df: pd.DataFrame, target_col: str):
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", StandardScaler(), numeric_cols),
-            ("cat", OneHotEncoder(handle_unknown="ignore", sparse=False), categorical_cols),
+            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), categorical_cols),
         ]
     )
     X_processed = preprocessor.fit_transform(X)

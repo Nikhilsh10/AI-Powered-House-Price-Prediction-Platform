@@ -1,0 +1,17 @@
+{
+  "numerical_features": [
+    "size",
+    "bhk",
+    "bath",
+    "price"
+  ],
+  "categorical_features": [
+    "location"
+  ],
+  "model_input_features": [
+    "location",
+    "size",
+    "bhk",
+    "bath"
+  ]
+}

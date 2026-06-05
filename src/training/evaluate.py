@@ -1,4 +1,7 @@
-# src/training/evaluate.py
+import sys, os
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.append(PROJECT_ROOT)
+sys.path.append(os.path.join(PROJECT_ROOT, "src"))
 """Evaluation script to compare XGBoost and LightGBM models.
 It loads the cleaned dataset, applies the saved preprocessor, splits data
 using a fixed random seed, computes metrics for each model, selects the

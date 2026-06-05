@@ -1,0 +1,10 @@
+{
+  "columns": {
+    "location": "object",
+    "size": "int64",
+    "bhk": "int64",
+    "bath": "int64",
+    "price": "float64"
+  },
+  "row_count": 5
+}
