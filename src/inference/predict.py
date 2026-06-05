@@ -12,8 +12,8 @@ from typing import Dict, Any
 
 # Paths – assume this file resides in src/inference
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-MODEL_PATH = os.path.join(BASE_DIR, "models", "xgboost_model.pkl")
-PREPROCESSOR_PATH = os.path.join(BASE_DIR, "models", "preprocessor.pkl")
+MODEL_PATH = os.path.join(BASE_DIR, "artifacts", "model.pkl")
+PREPROCESSOR_PATH = os.path.join(BASE_DIR, "artifacts", "preprocessor.pkl")
 
 
 def load_model() -> Any:
