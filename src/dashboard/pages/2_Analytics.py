@@ -14,12 +14,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # Ensure root is on path for imports if needed
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.append(PROJECT_ROOT)
-
-# ---------------------------------------------------------------------------
-# Load data and metrics
-# ---------------------------------------------------------------------------
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+# Path to the processed data CSV at repository root
 DATA_PATH = os.path.join(PROJECT_ROOT, "data", "processed", "clean_data.csv")
 METRICS_PATH = os.path.join(PROJECT_ROOT, "models", "metrics.json")
 
