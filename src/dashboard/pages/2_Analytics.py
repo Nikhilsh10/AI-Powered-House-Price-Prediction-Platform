@@ -18,7 +18,7 @@ st.write("Current working directory:", os.getcwd())
 st.write("Data exists (relative):", Path("data/processed/clean_data.csv").exists())
 
 # Resolve project root (3 levels up from this file)
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
 st.write("Resolved PROJECT_ROOT:", PROJECT_ROOT)
 
 # Paths to data and metrics
