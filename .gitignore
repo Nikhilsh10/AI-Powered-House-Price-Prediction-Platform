@@ -4,7 +4,7 @@ __pycache__/
 .env
 .venv
 venv/
-*.pkl
+# *.pkl  # disabled to allow tracking binary artifacts
 models/
 
 # Jupyter notebook checkpoints

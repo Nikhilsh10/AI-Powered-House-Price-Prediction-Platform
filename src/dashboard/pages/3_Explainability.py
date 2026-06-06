@@ -31,10 +31,9 @@ import matplotlib.pyplot as plt
 # ---------------------------------------------------------------------------
 # Project‑root handling & required artefact checks
 # ---------------------------------------------------------------------------
-from src.utils.paths import get_project_root
+from src.utils.paths import repo_root
 
-PROJECT_ROOT = get_project_root()
-sys.path.append(str(PROJECT_ROOT))
+PROJECT_ROOT = repo_root()
 
 # Required artefacts
 artifacts_dir = PROJECT_ROOT / "artifacts"
@@ -137,22 +136,24 @@ if explainer:
         )
     )
     st.pyplot(fig_wf)
-    plt.close(fig_wf)
+        plt.close(fig_wf)
 
     # -------------------------------------------------------------------
     # Feature contribution table – sorted by absolute impact
     # -------------------------------------------------------------------
-st.subheader("Feature Contributions")
-import numpy as np
-feature_names = df.columns.tolist()
-contrib_df = pd.DataFrame({
-    "feature": feature_names,
-    "impact": shap_values[0],
-})
-# Add absolute impact for sorting
-contrib_df["abs_impact"] = contrib_df["impact"].abs()
-# Sort by absolute impact descending and keep top 15 features
-contrib_df = contrib_df.sort_values("abs_impact", ascending=False).head(15)
-st.dataframe(contrib_df[["feature", "impact", "abs_impact"]])
+    st.subheader("Feature Contributions")
+    import numpy as np
+    feature_names = df.columns.tolist()
+    contrib_df = pd.DataFrame({
+        "feature": feature_names,
+        "impact": shap_values[0],
+    })
+    # Add absolute impact for sorting
+    contrib_df["abs_impact"] = contrib_df["impact"].abs()
+    # Sort by absolute impact descending and keep top 15 features
+    contrib_df = contrib_df.sort_values("abs_impact", ascending=False).head(15)
+    st.dataframe(contrib_df[["feature", "impact", "abs_impact"]])
 else:
     st.info("SHAP explainer not found – only the textual prediction recap is shown.")
+
+

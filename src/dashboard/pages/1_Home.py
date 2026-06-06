@@ -6,14 +6,10 @@ with a confidence interval and a visual gauge indicating prediction confidence.
 """
 
 import streamlit as st
-import sys, os
 import json
+from src.utils.paths import repo_root
 
-import os, sys
-from src.utils.paths import get_project_root
-
-PROJECT_ROOT = get_project_root()
-sys.path.append(str(PROJECT_ROOT))
+PROJECT_ROOT = repo_root()
 
 # Defensive checks for required artifacts
 artifacts_dir = PROJECT_ROOT / "artifacts"
