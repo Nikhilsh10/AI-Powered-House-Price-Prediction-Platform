@@ -8,7 +8,14 @@ inject custom CSS.
 """
 
 import streamlit as st
-import os
+import os, sys
+from pathlib import Path
+
+# ---------------------------------------------------------------------------
+# Add project root to the Python path (required for Cloud)
+# ---------------------------------------------------------------------------
+PROJECT_ROOT = Path(__file__).resolve().parents[2]  # repo root
+sys.path.append(str(PROJECT_ROOT))
 
 # ---------------------------------------------------------------------------
 # Global page configuration

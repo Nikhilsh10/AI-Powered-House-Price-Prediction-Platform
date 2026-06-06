@@ -1,1 +1,1 @@
-# Project scaffold created
+"""Top‑level package for the project – makes `src` importable."""

@@ -2,6 +2,18 @@
 """Explainability page – SHAP visualisations for the selected prediction.
 
 This page relies on the artefacts produced by the training pipeline:
+* ``artifacts/model.pkl`` (required)
+* ``artifacts/preprocessor.pkl`` (required)
+* ``artifacts/metadata.json`` (required)
+
+Optionally, if a serialized SHAP explainer is available at
+``artifacts/shap_explainer.pkl`` we will render SHAP summary and waterfall
+plots. If it is missing we fall back to a simple textual recap.
+"""
+
+"""Explainability page – SHAP visualisations for the selected prediction.
+
+This page relies on the artefacts produced by the training pipeline:
 - artifacts/model.pkl (required)
 - artifacts/preprocessor.pkl (required)
 - artifacts/metadata.json (required)
