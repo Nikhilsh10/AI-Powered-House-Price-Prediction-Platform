@@ -1,0 +1,6 @@
+Timestamp: 2026-06-07 00:21:22.352508
+PROJECT_ROOT: C:\Users\Nikhil Sharma\Downloads\AI-Powered House Price Prediction Platform
+DATA_PATH: C:\Users\Nikhil Sharma\Downloads\AI-Powered House Price Prediction Platform\data\processed\clean_data.csv
+DATA_PATH exists: True
+METRICS_PATH: C:\Users\Nikhil Sharma\Downloads\AI-Powered House Price Prediction Platform\models\metrics.json
+METRICS_PATH exists: True

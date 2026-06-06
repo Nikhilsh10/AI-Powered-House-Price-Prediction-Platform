@@ -14,36 +14,21 @@ import plotly.graph_objects as go
 from pathlib import Path
 from datetime import datetime
 
-# ---------------------------------------------------------------------------
 # Use reliable repository root detection
-# ---------------------------------------------------------------------------
 from src.utils.paths import get_project_root
 
 PROJECT_ROOT = get_project_root()
-st.write("Resolved PROJECT_ROOT:", PROJECT_ROOT)
-
 # Paths to data and metrics
-
 DATA_PATH = PROJECT_ROOT / "data" / "processed" / "clean_data.csv"
 METRICS_PATH = PROJECT_ROOT / "models" / "metrics.json"
-st.write("DATA_PATH:", DATA_PATH)
-st.write("DATA_PATH exists:", DATA_PATH.exists())
-st.write("METRICS_PATH:", METRICS_PATH)
-st.write("METRICS_PATH exists:", METRICS_PATH.exists())
 
-# Write diagnostics to a file for external inspection
-diagnostics_path = PROJECT_ROOT / "artifacts" / "analytics_diagnostics.txt"
-diagnostics_path.parent.mkdir(parents=True, exist_ok=True)
-with open(diagnostics_path, "w", encoding="utf-8") as f:
-    f.write(f"Timestamp: {datetime.now()}\n")
-    f.write(f"PROJECT_ROOT: {PROJECT_ROOT}\n")
-    f.write(f"DATA_PATH: {DATA_PATH}\n")
-    f.write(f"DATA_PATH exists: {DATA_PATH.exists()}\n")
-    f.write(f"METRICS_PATH: {METRICS_PATH}\n")
-    f.write(f"METRICS_PATH exists: {METRICS_PATH.exists()}\n")
-
-# Ensure root is on sys.path for imports if needed
-sys.path.append(str(PROJECT_ROOT))
+# Defensive checks – abort with a clear error if files are missing
+if not DATA_PATH.exists():
+    st.error(f"Dataset not found: {DATA_PATH}")
+    st.stop()
+if not METRICS_PATH.exists():
+    st.error(f"Metrics file not found: {METRICS_PATH}")
+    st.stop()
 
 @st.cache_data
 def load_dataset():
@@ -51,10 +36,8 @@ def load_dataset():
 
 @st.cache_data
 def load_metrics():
-    if METRICS_PATH.exists():
-        with open(METRICS_PATH) as f:
-            return json.load(f)
-    return {}
+    with open(METRICS_PATH) as f:
+        return json.load(f)
 
 try:
     df = load_dataset()
@@ -84,11 +67,7 @@ try:
 
     if "location" in df.columns and "price" in df.columns:
         top_loc = (
-            df.groupby("location")["price"]
-            .mean()
-            .nlargest(10)
-            .reset_index()
-            .rename(columns={"price": "avg_price"})
+            df.groupby("location")["price"].mean().nlargest(10).reset_index().rename(columns={"price": "avg_price"})
         )
         fig_top = px.bar(top_loc, x="location", y="avg_price", title="Top 10 Locations by Avg Price")
         st.plotly_chart(fig_top, use_container_width=True)

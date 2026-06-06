@@ -1,5 +1,7 @@
+from functools import lru_cache
 from pathlib import Path
 
+@lru_cache(maxsize=1)
 def get_project_root() -> Path:
     """Return the repository root directory.
     It is identified by the presence of the ``src`` folder, ``data`` folder,

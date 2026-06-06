@@ -9,9 +9,32 @@ import streamlit as st
 import sys, os
 import json
 
-# Ensure project root is on PYTHONPATH
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.append(PROJECT_ROOT)
+import os, sys
+from src.utils.paths import get_project_root
+
+PROJECT_ROOT = get_project_root()
+sys.path.append(str(PROJECT_ROOT))
+
+# Defensive checks for required artifacts
+artifacts_dir = PROJECT_ROOT / "artifacts"
+model_path = artifacts_dir / "model.pkl"
+preprocessor_path = artifacts_dir / "preprocessor.pkl"
+features_path = artifacts_dir / "feature_columns.json"
+metadata_path = artifacts_dir / "metadata.json"
+
+missing = []
+if not model_path.exists():
+    missing.append(str(model_path))
+if not preprocessor_path.exists():
+    missing.append(str(preprocessor_path))
+if not features_path.exists():
+    missing.append(str(features_path))
+if not metadata_path.exists():
+    missing.append(str(metadata_path))
+if missing:
+    st.error(f"Missing artifact files: {', '.join(missing)}")
+    st.stop()
+
 
 from inference.predict import predict_price
 
