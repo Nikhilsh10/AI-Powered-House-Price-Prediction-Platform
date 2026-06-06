@@ -7,4 +7,5 @@ lightgbm
 shap
 joblib
 plotly
+matplotlib
 statsmodels

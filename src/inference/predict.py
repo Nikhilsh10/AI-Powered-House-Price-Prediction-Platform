@@ -3,24 +3,24 @@
 Implements model loading, preprocessing, price prediction and confidence interval.
 The functions are deliberately lightweight to be called from Streamlit UI.
 """
-import os
 import json
 import joblib
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from typing import Dict, Any
 
-# Paths – assume this file resides in src/inference
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-MODEL_PATH = os.path.join(BASE_DIR, "artifacts", "model.pkl")
-PREPROCESSOR_PATH = os.path.join(BASE_DIR, "artifacts", "preprocessor.pkl")
+# Deterministic project root – this file is at <repo>/src/inference/predict.py
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+MODEL_PATH = PROJECT_ROOT / "artifacts" / "model.pkl"
+PREPROCESSOR_PATH = PROJECT_ROOT / "artifacts" / "preprocessor.pkl"
 
 
 def load_model() -> Any:
     """Load the trained XGBoost model.
     Returns the model object (XGBRegressor) or raises FileNotFoundError.
     """
-    if not os.path.exists(MODEL_PATH):
+    if not MODEL_PATH.exists():
         raise FileNotFoundError(f"Model file not found at {MODEL_PATH}")
     model = joblib.load(MODEL_PATH)
     return model
@@ -30,7 +30,7 @@ def load_preprocessor() -> Any:
     """Load the preprocessing pipeline (e.g., StandardScaler, ColumnTransformer).
     Returns the preprocessor object.
     """
-    if not os.path.exists(PREPROCESSOR_PATH):
+    if not PREPROCESSOR_PATH.exists():
         raise FileNotFoundError(f"Preprocessor file not found at {PREPROCESSOR_PATH}")
     preproc = joblib.load(PREPROCESSOR_PATH)
     return preproc
@@ -67,8 +67,6 @@ def _engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     # Derive total_rooms if not present
     if "bhk" in df.columns and "bath" in df.columns:
         df["total_rooms"] = df["bhk"] + df["bath"]
-    # Example placeholder for price_per_sqft (not used for prediction)
-    # One‑hot encode location if still categorical – the preprocessor will handle it.
     return df
 
 
@@ -102,9 +100,9 @@ def predict_price(input_data: Dict[str, Any]) -> Dict[str, float]:
         "upper_bound": float(upper),
     }
 
-# Helper for command‑line testing
+# Helper for command-line testing
 if __name__ == "__main__":
-    import json, argparse
+    import argparse
     parser = argparse.ArgumentParser(description="Predict house price from JSON input")
     parser.add_argument("--json", type=str, required=True, help="Path to JSON file with input fields")
     args = parser.parse_args()

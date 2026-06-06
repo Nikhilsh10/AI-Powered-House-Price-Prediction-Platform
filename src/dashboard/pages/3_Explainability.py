@@ -2,18 +2,6 @@
 """Explainability page – SHAP visualisations for the selected prediction.
 
 This page relies on the artefacts produced by the training pipeline:
-* ``artifacts/model.pkl`` (required)
-* ``artifacts/preprocessor.pkl`` (required)
-* ``artifacts/metadata.json`` (required)
-
-Optionally, if a serialized SHAP explainer is available at
-``artifacts/shap_explainer.pkl`` we will render SHAP summary and waterfall
-plots. If it is missing we fall back to a simple textual recap.
-"""
-
-"""Explainability page – SHAP visualisations for the selected prediction.
-
-This page relies on the artefacts produced by the training pipeline:
 - artifacts/model.pkl (required)
 - artifacts/preprocessor.pkl (required)
 - artifacts/metadata.json (required)
@@ -24,18 +12,15 @@ plots. If it is missing we fall back to a simple textual recap.
 """
 
 import streamlit as st
-import os, sys
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-# ---------------------------------------------------------------------------
-# Project‑root handling & required artefact checks
-# ---------------------------------------------------------------------------
-from src.utils.paths import repo_root
+# Deterministic project root – this file is at <repo>/src/dashboard/pages/3_Explainability.py
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
-PROJECT_ROOT = repo_root()
-
+# ---------------------------------------------------------------------------
 # Required artefacts
+# ---------------------------------------------------------------------------
 artifacts_dir = PROJECT_ROOT / "artifacts"
 model_path = artifacts_dir / "model.pkl"
 preproc_path = artifacts_dir / "preprocessor.pkl"
@@ -47,14 +32,14 @@ for p in (model_path, preproc_path, metadata_path):
         missing_required.append(str(p))
 
 if missing_required:
-    st.error(f"Missing required artefacts: {', '.join(missing_required)}")
+    st.error(f"Missing required artefacts:\n" + "\n".join(missing_required))
     st.stop()
 
 # Optional SHAP explainer
 shap_path = artifacts_dir / "shap_explainer.pkl"
 
 # ---------------------------------------------------------------------------
-# Session‑state handling – ensure a prediction has been made on Home page
+# Session-state handling – ensure a prediction has been made on Home page
 # ---------------------------------------------------------------------------
 required_keys = ["latest_prediction", "latest_result"]
 missing_keys = [k for k in required_keys if k not in st.session_state]
@@ -92,9 +77,9 @@ st.title("🔍 Explainability")
 st.markdown("---")
 
 st.subheader("Prediction recap")
-st.write(f"**Price:** {result['predicted_price']:.2f} Lakh₹")
+st.write(f"**Price:** {result['predicted_price']:.2f} Lakh₹")
 st.write(
-    f"**Confidence interval:** {result['lower_bound']:.2f} – {result['upper_bound']:.2f}"
+    f"**Confidence interval:** {result['lower_bound']:.2f} – {result['upper_bound']:.2f}"
 )
 
 # ---------------------------------------------------------------------------
@@ -136,7 +121,7 @@ if explainer:
         )
     )
     st.pyplot(fig_wf)
-        plt.close(fig_wf)
+    plt.close(fig_wf)
 
     # -------------------------------------------------------------------
     # Feature contribution table – sorted by absolute impact
@@ -155,5 +140,3 @@ if explainer:
     st.dataframe(contrib_df[["feature", "impact", "abs_impact"]])
 else:
     st.info("SHAP explainer not found – only the textual prediction recap is shown.")
-
-

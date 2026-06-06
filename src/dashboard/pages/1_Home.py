@@ -7,11 +7,14 @@ with a confidence interval and a visual gauge indicating prediction confidence.
 
 import streamlit as st
 import json
-from src.utils.paths import repo_root
+from pathlib import Path
 
-PROJECT_ROOT = repo_root()
+# Deterministic project root – this file is at <repo>/src/dashboard/pages/1_Home.py
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
+# ---------------------------------------------------------------------------
 # Defensive checks for required artifacts
+# ---------------------------------------------------------------------------
 artifacts_dir = PROJECT_ROOT / "artifacts"
 model_path = artifacts_dir / "model.pkl"
 preprocessor_path = artifacts_dir / "preprocessor.pkl"
@@ -19,18 +22,12 @@ features_path = artifacts_dir / "feature_columns.json"
 metadata_path = artifacts_dir / "metadata.json"
 
 missing = []
-if not model_path.exists():
-    missing.append(str(model_path))
-if not preprocessor_path.exists():
-    missing.append(str(preprocessor_path))
-if not features_path.exists():
-    missing.append(str(features_path))
-if not metadata_path.exists():
-    missing.append(str(metadata_path))
+for p in (model_path, preprocessor_path, features_path, metadata_path):
+    if not p.exists():
+        missing.append(str(p))
 if missing:
-    st.error(f"Missing artifact files: {', '.join(missing)}")
+    st.error(f"Missing artifact files:\n" + "\n".join(missing))
     st.stop()
-
 
 from inference.predict import predict_price
 

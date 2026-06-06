@@ -8,14 +8,17 @@ inject custom CSS.
 """
 
 import streamlit as st
-import os, sys
+import sys
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Add project root to the Python path (required for Cloud)
+# Add project root to the Python path so that `from src.config import …`
+# works everywhere (required for Streamlit Cloud where the repo root is not
+# automatically on sys.path).
 # ---------------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[2]  # repo root
-sys.path.append(str(PROJECT_ROOT))
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 # ---------------------------------------------------------------------------
 # Global page configuration
@@ -27,8 +30,8 @@ st.set_page_config(
 )
 
 # Load custom CSS if present
-css_path = os.path.join(os.path.dirname(__file__), "assets", "styles.css")
-if os.path.exists(css_path):
+css_path = Path(__file__).resolve().parent / "assets" / "styles.css"
+if css_path.exists():
     with open(css_path) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 else:
