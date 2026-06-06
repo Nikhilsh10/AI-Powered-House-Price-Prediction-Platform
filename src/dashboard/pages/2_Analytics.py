@@ -12,20 +12,35 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from pathlib import Path
+from datetime import datetime
 
-# Debug diagnostics for data loading
-st.write("Current working directory:", os.getcwd())
-st.write("Data exists (relative):", Path("data/processed/clean_data.csv").exists())
+# ---------------------------------------------------------------------------
+# Use reliable repository root detection
+# ---------------------------------------------------------------------------
+from src.utils.paths import get_project_root
 
-# Resolve project root (3 levels up from this file)
-PROJECT_ROOT = Path(__file__).resolve().parents[4]
+PROJECT_ROOT = get_project_root()
 st.write("Resolved PROJECT_ROOT:", PROJECT_ROOT)
 
 # Paths to data and metrics
+
 DATA_PATH = PROJECT_ROOT / "data" / "processed" / "clean_data.csv"
 METRICS_PATH = PROJECT_ROOT / "models" / "metrics.json"
 st.write("DATA_PATH:", DATA_PATH)
 st.write("DATA_PATH exists:", DATA_PATH.exists())
+st.write("METRICS_PATH:", METRICS_PATH)
+st.write("METRICS_PATH exists:", METRICS_PATH.exists())
+
+# Write diagnostics to a file for external inspection
+diagnostics_path = PROJECT_ROOT / "artifacts" / "analytics_diagnostics.txt"
+diagnostics_path.parent.mkdir(parents=True, exist_ok=True)
+with open(diagnostics_path, "w", encoding="utf-8") as f:
+    f.write(f"Timestamp: {datetime.now()}\n")
+    f.write(f"PROJECT_ROOT: {PROJECT_ROOT}\n")
+    f.write(f"DATA_PATH: {DATA_PATH}\n")
+    f.write(f"DATA_PATH exists: {DATA_PATH.exists()}\n")
+    f.write(f"METRICS_PATH: {METRICS_PATH}\n")
+    f.write(f"METRICS_PATH exists: {METRICS_PATH.exists()}\n")
 
 # Ensure root is on sys.path for imports if needed
 sys.path.append(str(PROJECT_ROOT))
