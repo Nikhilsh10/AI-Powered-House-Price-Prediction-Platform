@@ -1,3 +1,13 @@
+---
+title: House Price Prediction Platform
+emoji: 🏠
+colorFrom: blue
+colorTo: green
+sdk: streamlit
+app_file: src/dashboard/app.py
+pinned: false
+---
+
 # 🏠 AI-Powered House Price Prediction Platform
 
 ## Overview
