@@ -1,26 +1,439 @@
-/* src/dashboard/assets/styles.css */
-/* Simple glassmorphism card style */
-.glass-card {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: 1rem;
-  margin: 0.5rem 0;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  color: #000;
-  font-family: 'Inter', sans-serif;
+/* ================================================================
+   House Price Prediction Platform – Custom Stylesheet
+   Premium dark theme with glassmorphism, subtle gradients, 
+   and micro-animations.
+   ================================================================ */
+
+/* ---------- Google Fonts ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ---------- Root Variables ---------- */
+:root {
+    --bg-primary: #0f1117;
+    --bg-secondary: #161b22;
+    --bg-card: rgba(22, 27, 34, 0.7);
+    --bg-card-hover: rgba(30, 37, 48, 0.85);
+    --border-subtle: rgba(139, 148, 158, 0.15);
+    --border-accent: rgba(99, 179, 237, 0.3);
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --accent-blue: #58a6ff;
+    --accent-teal: #3fb9a8;
+    --accent-purple: #bc8cff;
+    --accent-amber: #d29922;
+    --accent-green: #3fb950;
+    --accent-red: #f85149;
+    --gradient-primary: linear-gradient(135deg, #1a1e2e 0%, #0f1117 100%);
+    --gradient-accent: linear-gradient(135deg, #58a6ff 0%, #3fb9a8 100%);
+    --gradient-card: linear-gradient(145deg, rgba(30,37,48,0.6) 0%, rgba(22,27,34,0.8) 100%);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25);
+    --shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.35);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-med: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ---------- Base Overrides ---------- */
+html, body, [data-testid="stAppViewContainer"] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    color: var(--text-primary) !important;
+}
+
+/* Hide default Streamlit branding */
+#MainMenu, footer, header {
+    visibility: hidden !important;
+}
+
+/* ---------- Sidebar ---------- */
+[data-testid="stSidebar"] {
+    background: var(--gradient-primary) !important;
+    border-right: 1px solid var(--border-subtle) !important;
+}
+
+[data-testid="stSidebar"] .stMarkdown p,
+[data-testid="stSidebar"] .stMarkdown li {
+    color: var(--text-secondary) !important;
+    font-size: 0.9rem;
+}
+
+[data-testid="stSidebar"] a {
+    color: var(--accent-blue) !important;
+    text-decoration: none !important;
+    transition: color var(--transition-fast);
+}
+
+[data-testid="stSidebar"] a:hover {
+    color: var(--accent-teal) !important;
+}
+
+/* ---------- Glass Card ---------- */
+.glass-card {
+    background: var(--gradient-card) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 1.5rem 1.25rem !important;
+    margin: 0.5rem 0 !important;
+    box-shadow: var(--shadow-card) !important;
+    text-align: center !important;
+    color: var(--text-primary) !important;
+    transition: transform var(--transition-med), box-shadow var(--transition-med), border-color var(--transition-med) !important;
+}
+
+.glass-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: var(--shadow-card-hover) !important;
+    border-color: var(--border-accent) !important;
+}
+
+.glass-card h3, .glass-card h4 {
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.glass-card p {
+    font-weight: 700 !important;
+    font-size: 1.6rem !important;
+    color: var(--text-primary) !important;
+    margin: 0 !important;
+    line-height: 1.3 !important;
+}
+
+/* ---------- KPI Accent Variants ---------- */
+.kpi-blue .glass-card { border-left: 3px solid var(--accent-blue) !important; }
+.kpi-teal .glass-card { border-left: 3px solid var(--accent-teal) !important; }
+.kpi-purple .glass-card { border-left: 3px solid var(--accent-purple) !important; }
+.kpi-amber .glass-card { border-left: 3px solid var(--accent-amber) !important; }
+
+/* ---------- Metric Cards (Streamlit native) ---------- */
+[data-testid="stMetric"] {
+    background: var(--gradient-card) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 1rem 1.25rem !important;
+    box-shadow: var(--shadow-card) !important;
+    transition: transform var(--transition-med), box-shadow var(--transition-med) !important;
+}
+
+[data-testid="stMetric"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-card-hover) !important;
+}
+
+[data-testid="stMetricLabel"] {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: var(--text-secondary) !important;
+}
+
+[data-testid="stMetricValue"] {
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+}
+
+/* ---------- Confidence Gauge ---------- */
 .confidence-gauge {
-  width: 100%;
-  height: 20px;
-  background: #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 0.5rem;
+    width: 100%;
+    height: 8px;
+    background: rgba(139, 148, 158, 0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 0.75rem;
 }
 
 .confidence-gauge div {
-  height: 100%;
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ---------- Section Dividers ---------- */
+.section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+    margin: 2rem 0;
+    border: none;
+}
+
+/* ---------- Page Header ---------- */
+.page-header {
+    padding: 1rem 0 0.5rem 0;
+    margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.25rem !important;
+}
+
+.page-header p {
+    color: var(--text-secondary) !important;
+    font-size: 0.95rem !important;
+    margin: 0 !important;
+}
+
+/* ---------- Form Styling ---------- */
+[data-testid="stForm"] {
+    background: var(--gradient-card) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 1.5rem !important;
+    box-shadow: var(--shadow-card) !important;
+}
+
+/* ---------- Buttons ---------- */
+.stButton > button,
+.stFormSubmitButton > button {
+    background: var(--gradient-accent) !important;
+    color: #0f1117 !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    padding: 0.6rem 2rem !important;
+    letter-spacing: 0.02em !important;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast) !important;
+    box-shadow: 0 2px 12px rgba(88, 166, 255, 0.25) !important;
+}
+
+.stButton > button:hover,
+.stFormSubmitButton > button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 20px rgba(88, 166, 255, 0.4) !important;
+    opacity: 0.92 !important;
+}
+
+.stButton > button:active,
+.stFormSubmitButton > button:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 6px rgba(88, 166, 255, 0.2) !important;
+}
+
+/* ---------- Inputs ---------- */
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input,
+.stSelectbox > div > div {
+    background: rgba(22, 27, 34, 0.6) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--text-primary) !important;
+    transition: border-color var(--transition-fast) !important;
+}
+
+.stTextInput > div > div > input:focus,
+.stNumberInput > div > div > input:focus {
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.15) !important;
+}
+
+/* ---------- Tables ---------- */
+.stDataFrame, .stTable {
+    border-radius: var(--radius-md) !important;
+    overflow: hidden !important;
+}
+
+/* ---------- Plotly Chart Containers ---------- */
+[data-testid="stPlotlyChart"] {
+    background: var(--gradient-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 0.75rem !important;
+    box-shadow: var(--shadow-card) !important;
+    margin-bottom: 1rem !important;
+}
+
+/* ---------- Info / Warning / Error boxes ---------- */
+.stAlert {
+    border-radius: var(--radius-md) !important;
+}
+
+/* ---------- Tabs ---------- */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 0.5rem !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: var(--radius-sm) !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+}
+
+/* ---------- Expander ---------- */
+[data-testid="stExpander"] {
+    background: var(--gradient-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+/* ---------- Result Cards ---------- */
+.result-card {
+    background: var(--gradient-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+    transition: transform var(--transition-med), box-shadow var(--transition-med);
+}
+
+.result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.result-price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0.5rem 0;
+}
+
+.result-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+}
+
+.result-range {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0.25rem 0;
+}
+
+/* ---------- Badge ---------- */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.badge-green {
+    background: rgba(63, 185, 80, 0.15);
+    color: var(--accent-green);
+    border: 1px solid rgba(63, 185, 80, 0.3);
+}
+
+.badge-amber {
+    background: rgba(210, 153, 34, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(210, 153, 34, 0.3);
+}
+
+.badge-red {
+    background: rgba(248, 81, 73, 0.15);
+    color: var(--accent-red);
+    border: 1px solid rgba(248, 81, 73, 0.3);
+}
+
+/* ---------- Model Comparison Table ---------- */
+.model-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--gradient-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    font-size: 0.9rem;
+}
+
+.model-table th {
+    background: rgba(22, 27, 34, 0.9);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.model-table td {
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(139, 148, 158, 0.08);
+}
+
+.model-table tr:last-child td {
+    border-bottom: none;
+}
+
+.model-table tr:hover td {
+    background: rgba(88, 166, 255, 0.04);
+}
+
+/* ---------- Subtitle ---------- */
+.section-subtitle {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+}
+
+/* ---------- Footer ---------- */
+.app-footer {
+    text-align: center;
+    padding: 2rem 0 1rem 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.app-footer a {
+    color: var(--accent-blue);
+    text-decoration: none;
+}
+
+/* ---------- Fade-in Animation ---------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* ---------- Streamlit element spacing ---------- */
+.block-container {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1100px !important;
 }

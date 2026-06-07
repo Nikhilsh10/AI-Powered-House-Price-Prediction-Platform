@@ -7,29 +7,26 @@ with a confidence interval and a visual gauge indicating prediction confidence.
 
 import streamlit as st
 import json
-from pathlib import Path
-
-# Deterministic project root – this file is at <repo>/src/dashboard/pages/1_Home.py
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+from src.config import PROJECT_ROOT, ARTIFACTS_DIR
 
 # ---------------------------------------------------------------------------
-# Defensive checks for required artifacts
+# Defensive checks for required artifacts using central config
 # ---------------------------------------------------------------------------
-artifacts_dir = PROJECT_ROOT / "artifacts"
-model_path = artifacts_dir / "model.pkl"
-preprocessor_path = artifacts_dir / "preprocessor.pkl"
-features_path = artifacts_dir / "feature_columns.json"
-metadata_path = artifacts_dir / "metadata.json"
+model_path = ARTIFACTS_DIR / "model.pkl"
+preprocessor_path = ARTIFACTS_DIR / "preprocessor.pkl"
+features_path = ARTIFACTS_DIR / "feature_columns.json"
+metadata_path = ARTIFACTS_DIR / "metadata.json"
 
 missing = []
 for p in (model_path, preprocessor_path, features_path, metadata_path):
     if not p.exists():
         missing.append(str(p))
 if missing:
-    st.error(f"Missing artifact files:\n" + "\n".join(missing))
+    st.error("Missing artifact files:\n" + "\n".join(missing))
     st.stop()
 
-from inference.predict import predict_price
+# Import the deterministic predictor
+from src.inference.predict import predict_price
 
 # ---------------------------------------------------------------------------
 # Helper – confidence gauge based on interval width ratio
@@ -59,6 +56,8 @@ def _confidence_gauge(lower: float, upper: float, pred: float) -> str:
     return gauge_html
 
 # ---------------------------------------------------------------------------
+# Render UI
+# ---------------------------------------------------------------------------
 def render():
     st.title("🏠 House Price Prediction")
     st.markdown("---")
@@ -72,7 +71,6 @@ def render():
         submit = st.form_submit_button("Predict Price")
 
     if submit:
-        # Build input dictionary matching training features
         input_data = {
             "location": location,
             "size": total_sqft,
@@ -81,20 +79,33 @@ def render():
         }
         try:
             result = predict_price(input_data)
-            # Store for explainability page
             st.session_state["latest_prediction"] = input_data
             st.session_state["latest_result"] = result
 
-            # Display cards using custom CSS class "glass-card"
             col1, col2 = st.columns(2)
             with col1:
-                st.markdown(f"<div class='glass-card'><h3>Estimated Price</h3><p style='font-size:2rem; font-weight:600'>{result['predicted_price']:.2f} Lakh₹</p></div>", unsafe_allow_html=True)
+                st.markdown(
+                    f"""
+                    <div class='glass-card'>
+                        <h3>Estimated Price</h3>
+                        <p style='font-size:2rem; font-weight:600'>{result['predicted_price']:.2f} Lakh₹</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
             with col2:
                 lower = result["lower_bound"]
                 upper = result["upper_bound"]
-                st.markdown(f"<div class='glass-card'><h3>Confidence Range</h3><p>{lower:.2f}L – {upper:.2f}L</p></div>", unsafe_allow_html=True)
+                st.markdown(
+                    f"""
+                    <div class='glass-card'>
+                        <h3>Confidence Range</h3>
+                        <p>{lower:.2f}L – {upper:.2f}L</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
-            # Confidence gauge
             gauge_html = _confidence_gauge(lower, upper, result["predicted_price"])
             st.markdown(gauge_html, unsafe_allow_html=True)
         except Exception as e:
@@ -102,3 +113,5 @@ def render():
 
     st.markdown("---")
     st.caption("*Prediction confidence gauge is based on the width of the ±5% interval.*")
+
+render()
