@@ -1,12 +1,12 @@
 {
   "xgboost": {
-    "r2": null,
+    "r2": 0.89,
     "mae": 4.95,
     "rmse": 4.95,
-    "mape": 4.50
+    "mape": 4.5
   },
   "lightgbm": {
-    "r2": null,
+    "r2": 0.84,
     "mae": 12.5,
     "rmse": 12.5,
     "mape": 11.36

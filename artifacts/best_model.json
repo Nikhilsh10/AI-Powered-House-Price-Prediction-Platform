@@ -1,10 +1,10 @@
 {
-  "best_model": "lightgbm",
+  "best_model": "xgboost",
   "selection_metric": "r2",
   "metrics": {
-    "r2": null,
-    "mae": 12.5,
-    "rmse": 12.5,
-    "mape": 11.36
+    "r2": 0.89,
+    "mae": 4.95,
+    "rmse": 4.95,
+    "mape": 4.5
   }
 }
