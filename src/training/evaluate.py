@@ -1,7 +1,4 @@
-import sys, os
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.append(PROJECT_ROOT)
-sys.path.append(os.path.join(PROJECT_ROOT, "src"))
+
 """Evaluation script to compare XGBoost and LightGBM models.
 It loads the cleaned dataset, applies the saved preprocessor, splits data
 using a fixed random seed, computes metrics for each model, selects the
@@ -15,10 +12,7 @@ import pandas as pd
 import joblib
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
-# Import config paths
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from training.config import (
+from src.training.config import (
     CLEAN_DATA_PATH,
     PREPROCESSOR_PATH,
     XGB_MODEL_PATH,

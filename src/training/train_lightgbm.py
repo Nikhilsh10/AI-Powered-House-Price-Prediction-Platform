@@ -2,10 +2,7 @@
 """Training script for LightGBM model.
 Mirrors the XGBoost pipeline: loads cleaned data, preprocesses, trains, evaluates, and saves.
 """
-import sys, os
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.append(PROJECT_ROOT)
-sys.path.append(os.path.join(PROJECT_ROOT, "src"))
+
 import json
 import joblib
 import pandas as pd
@@ -16,7 +13,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 import lightgbm as lgb
 
-from training.config import (
+from src.training.config import (
     CLEAN_DATA_PATH,
     FEATURE_METADATA_PATH,
     LGB_MODEL_PATH,

@@ -143,8 +143,8 @@ def render():
         with st.spinner("Running inference…"):
             try:
                 result = predict_price(input_data)
-            except Exception as e:
-                st.error(f"**Prediction failed:** {e}")
+            except ValueError as e:
+                st.error(f"**Invalid Input:** {e}")
                 return
 
         # Persist for Explainability page

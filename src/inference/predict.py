@@ -56,6 +56,21 @@ def _engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def validate_input(input_data: Dict[str, Any]) -> None:
+    """Validate raw input data before inference."""
+    if not input_data.get("location") or not str(input_data["location"]).strip():
+        raise ValueError("Location cannot be empty.")
+    try:
+        size = float(input_data.get("size", 0))
+    except (ValueError, TypeError):
+        size = 0.0
+    if size <= 0:
+        raise ValueError("Total Area must be a positive number.")
+    if int(input_data.get("bhk", 0)) <= 0:
+        raise ValueError("BHK must be at least 1.")
+    if int(input_data.get("bath", 0)) <= 0:
+        raise ValueError("Bathrooms must be at least 1.")
+
 def preprocess_input(input_data: Dict[str, Any]) -> np.ndarray:
     """Convert raw input dict from UI into a preprocessed feature array."""
     df = pd.DataFrame([input_data])
@@ -68,7 +83,9 @@ def predict_price(input_data: Dict[str, Any]) -> Dict[str, float]:
     """Predict house price and return a +/-5% confidence interval.
 
     Returns a dict with keys: predicted_price, lower_bound, upper_bound.
+    Raises ValueError on invalid input.
     """
+    validate_input(input_data)
     model = load_model()
     X = preprocess_input(input_data)
     pred = float(model.predict(X)[0])

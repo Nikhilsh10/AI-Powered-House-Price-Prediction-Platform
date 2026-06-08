@@ -12,17 +12,6 @@ Streamlit multipage apps automatically discover Python files inside the
 import sys
 from pathlib import Path
 
-# ---------------------------------------------------------------------------
-# Ensure repo root is on sys.path BEFORE any project imports.
-#   This file lives at:  <repo>/src/dashboard/app.py
-#     parents[0] = <repo>/src/dashboard
-#     parents[1] = <repo>/src
-#     parents[2] = <repo>          ← repo root
-# ---------------------------------------------------------------------------
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
-
 import streamlit as st
 
 # ---------------------------------------------------------------------------

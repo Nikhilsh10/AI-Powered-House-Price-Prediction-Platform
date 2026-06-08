@@ -11,13 +11,7 @@ from pathlib import Path
 import joblib
 
 # Import configuration paths from config.py
-import os
-import sys
-# Add project root to sys.path for absolute imports when script is run directly
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.append(PROJECT_ROOT)
-import config
+from src import config
 
 # Use config variables
 XGB_MODEL_PATH = config.XGB_MODEL_PATH
@@ -27,8 +21,7 @@ METRICS_PATH = config.METRICS_PATH
 BEST_MODEL_PATH = config.BEST_MODEL_PATH
 FEATURE_METADATA_PATH = config.FEATURE_METADATA_PATH
 
-# Define artifact directory and its sub‑paths
-ARTIFACTS_DIR = Path(__file__).resolve().parents[2] / "artifacts"
+ARTIFACTS_DIR = config.ARTIFACTS_DIR
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 
 MODEL_ARTIFACT = ARTIFACTS_DIR / "model.pkl"
