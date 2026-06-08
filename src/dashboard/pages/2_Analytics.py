@@ -69,7 +69,15 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
 with col3:
-    avg_sqft = df["size"].mean()
+    # Determine which size column exists
+    if "size" in df.columns:
+        size_col = "size"
+    elif "total_sqft" in df.columns:
+        size_col = "total_sqft"
+    else:
+        st.error("Dataset missing both 'size' and 'total_sqft' columns.")
+        st.stop()
+    avg_sqft = df[size_col].mean()
     st.markdown(f"""
     <div class='glass-card'>
         <h3>Avg. Size (sqft)</h3>
@@ -83,7 +91,7 @@ st.markdown("\n")
 st.subheader("Price vs Size")
 fig_price_size = px.scatter(
     df,
-    x="size",
+    x=size_col,
     y="price",
     color="location",
     trendline="lowess",
@@ -122,7 +130,13 @@ for model_name, vals in metrics.items():
         "MAPE": f"{vals.get('mape', 'N/A'):.2f}%",
     })
 metrics_df = pd.DataFrame(rows)
-st.dataframe(metrics_df.style.set_properties(**{"background": "var(--gradient-card)", "color": "var(--text-primary)"})
+styled_metrics = metrics_df.style.set_properties(
+    **{
+        "background": "var(--gradient-card)",
+        "color": "var(--text-primary)"
+    }
+)
+st.dataframe(styled_metrics)
 
 st.markdown("---")
 st.caption("All charts use a dark theme to match the app styling.")

@@ -128,7 +128,12 @@ if explainer:
     # -------------------------------------------------------------------
     st.subheader("Feature Contributions")
     import numpy as np
-    feature_names = df.columns.tolist()
+    # Preferred feature names from the preprocessor after transformation
+    try:
+        feature_names = preproc.get_feature_names_out()
+    except Exception:
+        # Fallback to generic feature_0, feature_1, ... based on transformed shape
+        feature_names = [f"feature_{i}" for i in range(df_processed.shape[1])]
     contrib_df = pd.DataFrame({
         "feature": feature_names,
         "impact": shap_values[0],
