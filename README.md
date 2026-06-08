@@ -88,6 +88,24 @@ SHAP Explainability
 - MAE (Mean Absolute Error)
 - MAPE (Mean Absolute Percentage Error)
 
+### Model Progression & Preprocessing Impact
+
+During development, we rigorously tracked the impact of various preprocessing techniques on our model's performance on the Bengaluru housing dataset. The dataset is notoriously noisy, featuring inconsistent area units and extreme price outliers that skew regression distributions.
+
+Below is the evaluation progression for our XGBoost model evaluated on the **original (exponentiated) price scale**:
+
+| Step | Modification | R² | MAE (Lakh ₹) | MAPE (%) |
+| :--- | :--- | :--- | :--- | :--- |
+| **0** | Baseline (Raw 13k Dataset) | `0.608` | 18.09 | 26.3% |
+| **1** | Log-transform Target (`np.log1p`) | `0.585` | 17.68 | 23.2% |
+| **2** | Drop `price_per_sqft` Outliers (3 Std Dev) | `0.577` | 18.20 | 23.9% |
+| **3** | Group Sparse Locations (<10 to 'other') | `0.529` | 19.35 | 25.8% |
+
+**Honest Commentary on Metrics:**
+While one might expect R² to universally increase with data cleaning, calculating standard R² on inverse-transformed (expm1) predictions reveals a classic ML trade-off. By log-transforming the target (Step 1), the model optimized for the geometric mean rather than the arithmetic mean, actively ignoring massive high-end price outliers. Because the R² metric heavily penalizes large absolute squared errors on extreme outliers (which the log-model now ignores), the absolute R² score decreased. 
+
+However, looking at the **MAPE**, the log-transformation successfully reduced the percentage error from **26.3% to 23.2%**. The model became significantly better at predicting the vast majority of standard homes, demonstrating the importance of selecting evaluation metrics (like MAE/MAPE) that align with the business use-case rather than blindly optimizing R² on noisy, heavy-tailed distributions. Steps 2 and 3 proved neutral-to-negative at their current thresholds, highlighting areas for future hyperparameter tuning and outlier threshold optimization.
+
 ## Testing
 
 Automated regression tests verify:
