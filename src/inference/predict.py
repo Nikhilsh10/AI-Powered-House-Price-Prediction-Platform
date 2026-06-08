@@ -88,7 +88,8 @@ def predict_price(input_data: Dict[str, Any]) -> Dict[str, float]:
     validate_input(input_data)
     model = load_model()
     X = preprocess_input(input_data)
-    pred = float(model.predict(X)[0])
+    pred_log = float(model.predict(X)[0])
+    pred = float(np.expm1(pred_log))
     return {
         "predicted_price": pred,
         "lower_bound": pred * 0.95,

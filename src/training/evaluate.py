@@ -46,7 +46,8 @@ def prepare_test_set(df: pd.DataFrame, target_col: str, test_size: float = 0.2, 
 
 def evaluate_model(model_path: str, X_test: np.ndarray, y_test: np.ndarray):
     model = joblib.load(model_path)
-    preds = model.predict(X_test)
+    preds_log = model.predict(X_test)
+    preds = np.expm1(preds_log)
     r2 = r2_score(y_test, preds)
     mae = mean_absolute_error(y_test, preds)
     rmse = mean_squared_error(y_test, preds, squared=False)

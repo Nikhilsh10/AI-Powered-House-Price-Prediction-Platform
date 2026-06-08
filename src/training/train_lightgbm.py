@@ -54,6 +54,10 @@ def train_and_save():
     df = load_data()
     target_col = get_target_column(df)
     X_processed, y, preprocessor = preprocess(df, target_col)
+    
+    # [Step 1] Log-transform target
+    y = np.log1p(y)
+    
     X_train, X_test, y_train, y_test = train_test_split(
         X_processed, y, test_size=0.2, random_state=42)
     model = lgb.LGBMRegressor(**LGB_PARAMS)
@@ -62,11 +66,18 @@ def train_and_save():
     joblib.dump(model, LGB_MODEL_PATH)
     joblib.dump(preprocessor, PREPROCESSOR_PATH)
     # Evaluation
-    preds = model.predict(X_test)
-    r2 = r2_score(y_test, preds)
-    mae = mean_absolute_error(y_test, preds)
-    rmse = mean_squared_error(y_test, preds, squared=False)
-    mape = np.mean(np.abs((y_test - preds) / np.where(y_test == 0, 1e-8, y_test))) * 100
+    # Predict
+    preds_log = model.predict(X_test)
+    
+    # Inverse transform to original scale
+    y_test_real = np.expm1(y_test)
+    preds_real = np.expm1(preds_log)
+    
+    r2 = r2_score(y_test_real, preds_real)
+    mae = mean_absolute_error(y_test_real, preds_real)
+    rmse = mean_squared_error(y_test_real, preds_real, squared=False)
+    # MAPE (avoid division by zero)
+    mape = np.mean(np.abs((y_test_real - preds_real) / np.where(y_test_real == 0, 1e-8, y_test_real)))*100
     metrics = {"r2": r2, "mae": mae, "rmse": rmse, "mape": mape}
     # Store LightGBM specific metrics
     model_metrics_path = os.path.join(os.path.dirname(LGB_MODEL_PATH), "lightgbm_metrics.json")

@@ -34,12 +34,32 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     for col in cat_cols:
         mode = df[col].mode().iloc[0] if not df[col].mode().empty else "Unknown"
         df[col] = df[col].fillna(mode)
-    # Outlier removal (IQR)
+    # Outlier removal (IQR) on numeric columns (excluding target if needed, but let's do it on features)
     Q1 = df[num_cols].quantile(0.25)
     Q3 = df[num_cols].quantile(0.75)
     IQR = Q3 - Q1
     mask = ~((df[num_cols] < (Q1 - 1.5 * IQR)) | (df[num_cols] > (Q3 + 1.5 * IQR))).any(axis=1)
     df = df[mask]
+    
+    # [Step 2] Remove price-per-sqft outliers (3 standard deviations)
+    if "price" in df.columns and "total_sqft" in df.columns:
+        # total_sqft might be a string with ranges, so coerce to numeric first
+        def parse_sqft(x):
+            try:
+                if isinstance(x, str) and '-' in x:
+                    parts = x.split('-')
+                    return (float(parts[0].strip()) + float(parts[1].strip())) / 2
+                return float(x)
+            except:
+                return np.nan
+        df['total_sqft_num'] = df['total_sqft'].apply(parse_sqft)
+        df = df.dropna(subset=['total_sqft_num'])
+        df['price_per_sqft'] = df['price'] * 100000 / df['total_sqft_num']  # price is in Lakhs (100,000)
+        pps_mean = df['price_per_sqft'].mean()
+        pps_std = df['price_per_sqft'].std()
+        df = df[(df['price_per_sqft'] >= pps_mean - 3 * pps_std) & (df['price_per_sqft'] <= pps_mean + 3 * pps_std)]
+        df = df.drop(columns=['total_sqft_num', 'price_per_sqft'])
+        
     return df
 
 
@@ -57,8 +77,17 @@ def feature_engineering(df: pd.DataFrame) -> pd.DataFrame:
         df["PricePerSqft"] = df["SalePrice"] / df["LotArea"]
     if {"Bedrooms", "Bathrooms"}.issubset(df.columns):
         df["TotalRooms"] = df["Bedrooms"] + df["Bathrooms"]
+    # [Step 3] Group sparse locations
+    location_col = next((col for col in ["location", "Location", "Neighborhood"] if col in df.columns), None)
+    if location_col:
+        # Strip whitespace
+        df[location_col] = df[location_col].apply(lambda x: str(x).strip() if pd.notnull(x) else x)
+        location_stats = df[location_col].value_counts()
+        location_stats_less_than_10 = location_stats[location_stats < 10]
+        df[location_col] = df[location_col].apply(lambda x: 'other' if x in location_stats_less_than_10 else x)
+        
     # One‑hot encode categorical location columns if they exist
-    location_cols = [col for col in ["Neighborhood", "Location"] if col in df.columns]
+    location_cols = [col for col in ["Neighborhood", "Location", "location"] if col in df.columns]
     if location_cols:
         df = pd.get_dummies(df, columns=location_cols, drop_first=True)
     return df
