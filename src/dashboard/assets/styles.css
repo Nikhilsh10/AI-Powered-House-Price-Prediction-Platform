@@ -1,77 +1,56 @@
 /* ================================================================
    House Price Prediction Platform — Production Stylesheet
-   Aesthetic: Precision Dark — surgical clarity meets premium depth.
-   One sentence identity: "A Bloomberg terminal for real estate."
+   Aesthetic: Precision Cartography (Editorial, Data Journalism)
    ================================================================ */
 
 /* ---------- Google Fonts ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
 /* ---------- Design Tokens ---------- */
 :root {
     /* Background layers */
-    --bg-void:        #08090c;
-    --bg-base:        #0d0f14;
-    --bg-surface:     #13161d;
-    --bg-raised:      #1a1e28;
-    --bg-overlay:     rgba(20, 24, 34, 0.92);
+    --bg-base:        #F9F9F6;  /* Alabaster paper */
+    --bg-surface:     #FFFFFF;  /* Crisp white */
+    --bg-raised:      #F0F0EB;  /* Slightly deeper paper */
+    --bg-accent:      #E8DCC4;  /* Muted sepia */
 
     /* Borders */
-    --border-faint:   rgba(255, 255, 255, 0.04);
-    --border-subtle:  rgba(255, 255, 255, 0.08);
-    --border-medium:  rgba(255, 255, 255, 0.14);
-    --border-accent:  rgba(94, 234, 212, 0.35);
+    --border-faint:   #E0E0D8;
+    --border-subtle:  #D2D2C6;
+    --border-medium:  #A3A398;
+    --border-dark:    #1A1A1A;
 
     /* Text */
-    --text-primary:   #f0f2f7;
-    --text-secondary: #8a93a8;
-    --text-muted:     #4f5668;
-    --text-inverse:   #08090c;
+    --text-primary:   #1A1A1A;
+    --text-secondary: #4A4A4A;
+    --text-muted:     #6E6E6E;
+    --text-inverse:   #F9F9F6;
 
-    /* Accent system — dominant: teal, secondary: amber */
-    --accent-teal:    #5eead4;
-    --accent-teal-dim: rgba(94, 234, 212, 0.12);
-    --accent-amber:   #fbbf24;
-    --accent-amber-dim: rgba(251, 191, 36, 0.12);
-    --accent-rose:    #fb7185;
-    --accent-rose-dim: rgba(251, 113, 133, 0.12);
-    --accent-indigo:  #818cf8;
-    --accent-indigo-dim: rgba(129, 140, 248, 0.12);
-    --accent-green:   #4ade80;
-    --accent-green-dim: rgba(74, 222, 128, 0.10);
+    /* Accent system */
+    --accent-blue:    #3A5B72;  /* Cartography blue */
+    --accent-red:     #8B3A3A;  /* Brick red */
+    --accent-sepia:   #D2B48C;
 
-    /* Gradients */
-    --grad-hero:      linear-gradient(135deg, #0d0f14 0%, #13161d 50%, #0d1520 100%);
-    --grad-teal:      linear-gradient(135deg, #5eead4 0%, #14b8a6 100%);
-    --grad-amber:     linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-    --grad-card:      linear-gradient(145deg, rgba(26,30,40,0.7) 0%, rgba(13,15,20,0.9) 100%);
-    --grad-shine:     linear-gradient(90deg, transparent 0%, rgba(94,234,212,0.05) 50%, transparent 100%);
-
-    /* Shadows */
-    --shadow-sm:      0 1px 3px rgba(0,0,0,0.4);
-    --shadow-md:      0 4px 16px rgba(0,0,0,0.5);
-    --shadow-lg:      0 8px 32px rgba(0,0,0,0.6);
-    --shadow-teal:    0 0 20px rgba(94,234,212,0.15);
-    --shadow-amber:   0 0 20px rgba(251,191,36,0.12);
+    /* Shadows (Solid, editorial) */
+    --shadow-flat:    3px 3px 0px 0px #1A1A1A;
+    --shadow-subtle:  0 2px 4px rgba(0,0,0,0.04);
 
     /* Radii */
-    --r-sm:  6px;
-    --r-md:  10px;
-    --r-lg:  14px;
-    --r-xl:  20px;
+    --r-sm:  0px;
+    --r-md:  0px;
+    --r-lg:  0px;
+    --r-xl:  0px;
 
     /* Motion */
     --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-in:    cubic-bezier(0.4, 0, 1, 1);
     --dur-fast:   160ms;
     --dur-med:    280ms;
-    --dur-slow:   420ms;
 }
 
 /* ---------- Typography Reset ---------- */
 html, body, [data-testid="stAppViewContainer"] {
-    font-family: 'Outfit', ui-sans-serif, system-ui, sans-serif !important;
-    font-size: 15px !important;
+    font-family: 'Lora', serif !important;
+    font-size: 16px !important;
     line-height: 1.6 !important;
     color: var(--text-primary) !important;
     background-color: var(--bg-base) !important;
@@ -85,16 +64,13 @@ header { display: none !important; }
 
 /* ---------- App background ---------- */
 [data-testid="stAppViewContainer"] {
-    background:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(94,234,212,0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(251,191,36,0.04) 0%, transparent 50%),
-        var(--grad-hero) !important;
+    background: var(--bg-base) !important;
 }
 
 .block-container {
-    padding-top: 2.5rem !important;
-    padding-bottom: 3rem !important;
-    max-width: 1200px !important;
+    padding-top: 3rem !important;
+    padding-bottom: 4rem !important;
+    max-width: 900px !important;
 }
 
 /* ---------- Sidebar ---------- */
@@ -105,120 +81,113 @@ header { display: none !important; }
 
 [data-testid="stSidebar"] .stMarkdown p {
     color: var(--text-secondary) !important;
-    font-size: 0.88rem !important;
+    font-size: 0.9rem !important;
+    font-family: 'Lora', serif !important;
 }
 
 [data-testid="stSidebar"] a {
-    color: var(--accent-teal) !important;
-    text-decoration: none !important;
+    color: var(--accent-blue) !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px;
 }
 
 /* ---------- Page titles (h1) ---------- */
 h1 {
-    font-size: 1.9rem !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.02em !important;
+    font-family: 'DM Serif Display', serif !important;
+    font-size: 2.8rem !important;
+    font-weight: 400 !important;
     color: var(--text-primary) !important;
-    line-height: 1.15 !important;
+    line-height: 1.1 !important;
+    margin-bottom: 1rem !important;
+    border-bottom: 2px solid var(--text-primary) !important;
+    padding-bottom: 0.5rem !important;
 }
 
-h2 { font-size: 1.3rem !important; font-weight: 600 !important; }
-h3 { font-size: 1rem !important; font-weight: 600 !important; }
+h2 { 
+    font-family: 'DM Serif Display', serif !important;
+    font-size: 1.8rem !important; 
+    font-weight: 400 !important; 
+    color: var(--text-primary) !important;
+    margin-top: 2rem !important;
+    border-top: 1px solid var(--border-dark) !important;
+    padding-top: 1rem !important;
+}
+h3 { 
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.9rem !important; 
+    font-weight: 600 !important; 
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: var(--text-secondary) !important;
+}
 
 /* ---------- KPI / Stat Cards ---------- */
 .kpi-card {
-    background: var(--grad-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--r-lg);
-    padding: 1.4rem 1.2rem 1.2rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-dark);
+    padding: 1.5rem;
     position: relative;
-    overflow: hidden;
-    transition: transform var(--dur-med) var(--ease-out),
-                box-shadow var(--dur-med) var(--ease-out),
-                border-color var(--dur-med);
-}
-
-.kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--grad-teal);
-    opacity: 0;
-    transition: opacity var(--dur-med);
+    box-shadow: var(--shadow-flat);
+    transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-teal);
-    border-color: var(--border-accent);
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px 0px #1A1A1A;
 }
 
-.kpi-card:hover::before { opacity: 1; }
-
 .kpi-label {
-    font-size: 0.72rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     margin-bottom: 0.5rem;
 }
 
 .kpi-value {
-    font-family: 'Fira Code', monospace;
-    font-size: 1.85rem;
-    font-weight: 700;
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
     color: var(--text-primary);
     line-height: 1.1;
-    letter-spacing: -0.02em;
 }
 
 .kpi-sub {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-top: 0.35rem;
+    font-family: 'Lora', serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    font-style: italic;
 }
 
-.kpi-accent-teal   { border-top: 2px solid var(--accent-teal); }
-.kpi-accent-amber  { border-top: 2px solid var(--accent-amber); }
-.kpi-accent-indigo { border-top: 2px solid var(--accent-indigo); }
-.kpi-accent-rose   { border-top: 2px solid var(--accent-rose); }
+.kpi-accent-teal   { border-top: 4px solid var(--accent-blue); }
+.kpi-accent-amber  { border-top: 4px solid var(--accent-sepia); }
+.kpi-accent-indigo { border-top: 4px solid var(--text-primary); }
+.kpi-accent-rose   { border-top: 4px solid var(--accent-red); }
 
-/* ---------- Glass Card (result display) ---------- */
+/* ---------- Glass Card (result display) -> Editorial Card ---------- */
 .glass-card {
-    background: var(--grad-card);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--r-lg);
-    padding: 1.75rem 1.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-dark);
+    padding: 2rem;
     text-align: center;
-    box-shadow: var(--shadow-md);
-    transition: transform var(--dur-med) var(--ease-out),
-                box-shadow var(--dur-med),
-                border-color var(--dur-med);
-}
-
-.glass-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-teal);
-    border-color: var(--border-accent);
+    box-shadow: var(--shadow-flat);
 }
 
 .glass-card h3, .glass-card h4 {
-    font-size: 0.72rem !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.8rem !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.1em !important;
-    color: var(--text-muted) !important;
-    margin-bottom: 0.6rem !important;
+    letter-spacing: 0.05em !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 1rem !important;
 }
 
 .glass-card p {
-    font-family: 'Fira Code', monospace;
-    font-size: 1.65rem !important;
-    font-weight: 700 !important;
+    font-family: 'DM Serif Display', serif !important;
+    font-size: 2.2rem !important;
     color: var(--text-primary) !important;
     margin: 0 !important;
     line-height: 1.2 !important;
@@ -227,337 +196,333 @@ h3 { font-size: 1rem !important; font-weight: 600 !important; }
 /* ---------- Price result display ---------- */
 .result-hero {
     text-align: center;
-    padding: 2rem 1rem;
-    background: var(--grad-card);
-    border: 1px solid var(--border-accent);
-    border-radius: var(--r-xl);
-    box-shadow: var(--shadow-teal);
+    padding: 3rem 1.5rem;
+    background: var(--bg-raised);
+    border: 2px solid var(--border-dark);
+    box-shadow: 6px 6px 0px 0px #1A1A1A;
     position: relative;
-    overflow: hidden;
-}
-
-.result-hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--grad-shine);
-    pointer-events: none;
-    animation: shimmer 3s ease infinite;
-}
-
-@keyframes shimmer {
-    0%   { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
 }
 
 .result-price {
-    font-family: 'Fira Code', monospace;
-    font-size: 3rem;
-    font-weight: 700;
-    background: var(--grad-teal);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: 'DM Serif Display', serif;
+    font-size: 4.5rem;
+    color: var(--accent-blue);
     line-height: 1;
-    letter-spacing: -0.03em;
-}
-
-.result-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
     margin-bottom: 0.5rem;
 }
 
-.result-range {
-    font-family: 'Fira Code', monospace;
-    font-size: 0.9rem;
+.result-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--text-secondary);
-    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: inline-block;
+    padding-bottom: 0.3rem;
+}
+
+.result-range {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
 }
 
 /* ---------- Confidence gauge ---------- */
 .confidence-wrap {
-    margin-top: 1.5rem;
+    margin-top: 2rem;
     text-align: center;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .confidence-track {
     width: 100%;
-    height: 6px;
+    height: 8px;
     background: var(--border-subtle);
-    border-radius: 3px;
-    overflow: hidden;
+    border: 1px solid var(--border-dark);
     margin: 0.5rem 0;
 }
 
 .confidence-fill {
     height: 100%;
-    border-radius: 3px;
+    background: var(--accent-blue);
     transition: width 0.8s var(--ease-out);
 }
 
 .confidence-label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
     text-transform: uppercase;
-}
-
-/* ---------- Section headers ---------- */
-.section-head {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin: 2rem 0 1rem;
-}
-
-.section-head-line {
-    flex: 1;
-    height: 1px;
-    background: var(--border-faint);
-}
-
-.section-head-text {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    white-space: nowrap;
+    color: var(--text-secondary);
 }
 
 /* ---------- Dividers ---------- */
 hr {
     border: none !important;
     height: 1px !important;
-    background: var(--border-faint) !important;
-    margin: 1.5rem 0 !important;
+    background: var(--border-medium) !important;
+    margin: 2.5rem 0 !important;
 }
 
 /* ---------- Form container ---------- */
 [data-testid="stForm"] {
-    background: var(--grad-card) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: var(--r-xl) !important;
-    padding: 2rem 1.75rem !important;
-    box-shadow: var(--shadow-md) !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 0 !important;
+    padding: 2.5rem !important;
+    box-shadow: var(--shadow-flat) !important;
 }
 
 /* ---------- Inputs ---------- */
 .stTextInput > div > div > input,
 .stNumberInput > div > div > input {
-    background: var(--bg-raised) !important;
+    background: var(--bg-surface) !important;
     border: 1px solid var(--border-medium) !important;
-    border-radius: var(--r-md) !important;
+    border-radius: 0 !important;
     color: var(--text-primary) !important;
-    font-family: 'Outfit', sans-serif !important;
+    font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.95rem !important;
-    transition: border-color var(--dur-fast), box-shadow var(--dur-fast) !important;
+    padding: 0.6rem 0.8rem !important;
 }
 
 .stTextInput > div > div > input:focus,
 .stNumberInput > div > div > input:focus {
-    border-color: var(--accent-teal) !important;
-    box-shadow: 0 0 0 3px rgba(94,234,212,0.12) !important;
+    border-color: var(--border-dark) !important;
+    box-shadow: 2px 2px 0px 0px #1A1A1A !important;
     outline: none !important;
 }
 
 .stSelectbox > div > div {
-    background: var(--bg-raised) !important;
+    background: var(--bg-surface) !important;
     border: 1px solid var(--border-medium) !important;
-    border-radius: var(--r-md) !important;
+    border-radius: 0 !important;
     color: var(--text-primary) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
 }
 
 /* ---------- Labels ---------- */
 .stTextInput label, .stNumberInput label, .stSelectbox label {
-    color: var(--text-secondary) !important;
-    font-size: 0.82rem !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.02em !important;
+    color: var(--text-primary) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
 }
 
 /* ---------- Submit / Buttons ---------- */
 .stButton > button,
 .stFormSubmitButton > button {
-    background: var(--grad-teal) !important;
-    color: var(--text-inverse) !important;
-    font-family: 'Outfit', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 0.9rem !important;
-    letter-spacing: 0.04em !important;
-    border: none !important;
-    border-radius: var(--r-md) !important;
-    padding: 0.65rem 2.25rem !important;
-    box-shadow: 0 2px 12px rgba(94,234,212,0.25) !important;
-    transition: transform var(--dur-fast) var(--ease-out),
-                box-shadow var(--dur-fast) !important;
+    background: var(--bg-surface) !important;
+    color: var(--text-primary) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 0 !important;
+    padding: 0.75rem 2.5rem !important;
+    box-shadow: 2px 2px 0px 0px #1A1A1A !important;
+    transition: all var(--dur-fast) !important;
 }
 
 .stButton > button:hover,
 .stFormSubmitButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 24px rgba(94,234,212,0.4) !important;
+    background: var(--border-dark) !important;
+    color: var(--bg-surface) !important;
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3px 3px 0px 0px #1A1A1A !important;
 }
 
 .stButton > button:active,
 .stFormSubmitButton > button:active {
-    transform: translateY(0) !important;
+    transform: translate(1px, 1px) !important;
+    box-shadow: 1px 1px 0px 0px #1A1A1A !important;
 }
 
 /* ---------- Tables ---------- */
 .stDataFrame {
-    border-radius: var(--r-md) !important;
-    overflow: hidden !important;
-    border: 1px solid var(--border-subtle) !important;
+    border-radius: 0 !important;
+    border: 1px solid var(--border-dark) !important;
+    box-shadow: var(--shadow-flat) !important;
 }
 
 /* ---------- Plotly charts ---------- */
 [data-testid="stPlotlyChart"] {
-    background: var(--grad-card) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: var(--r-lg) !important;
-    padding: 0.5rem !important;
-    box-shadow: var(--shadow-md) !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 0 !important;
+    padding: 1rem !important;
+    box-shadow: var(--shadow-flat) !important;
 }
 
 /* ---------- Alerts / Info boxes ---------- */
 .stAlert {
-    border-radius: var(--r-md) !important;
-    border: 1px solid var(--border-subtle) !important;
+    border-radius: 0 !important;
+    border: 1px solid var(--border-dark) !important;
+    background: var(--bg-raised) !important;
+    box-shadow: var(--shadow-flat) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Lora', serif !important;
 }
 
 /* ---------- Metric (native Streamlit) ---------- */
 [data-testid="stMetric"] {
-    background: var(--grad-card) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: var(--r-md) !important;
-    padding: 1rem 1.25rem !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 0 !important;
+    padding: 1.5rem !important;
+    box-shadow: var(--shadow-flat) !important;
 }
 
 [data-testid="stMetricLabel"] {
-    font-size: 0.72rem !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.75rem !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.08em !important;
-    color: var(--text-muted) !important;
+    letter-spacing: 0.05em !important;
+    color: var(--text-secondary) !important;
 }
 
 [data-testid="stMetricValue"] {
-    font-family: 'Space Mono', monospace !important;
-    font-size: 1.7rem !important;
-    font-weight: 700 !important;
+    font-family: 'DM Serif Display', serif !important;
+    font-size: 2.2rem !important;
     color: var(--text-primary) !important;
 }
 
 /* ---------- Expanders ---------- */
 [data-testid="stExpander"] {
-    background: var(--grad-card) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: var(--r-md) !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 0 !important;
+    box-shadow: var(--shadow-flat) !important;
 }
 
 /* ---------- Sidebar navigation labels ---------- */
 [data-testid="stSidebarNav"] a {
-    color: var(--text-secondary) !important;
+    color: var(--text-primary) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
     font-weight: 500 !important;
-    font-size: 0.9rem !important;
-    padding: 0.4rem 0.75rem !important;
-    border-radius: var(--r-sm) !important;
-    transition: background var(--dur-fast), color var(--dur-fast) !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid transparent !important;
+    text-decoration: none !important;
 }
 
 [data-testid="stSidebarNav"] a:hover,
 [data-testid="stSidebarNav"] a[aria-selected="true"] {
-    background: var(--accent-teal-dim) !important;
-    color: var(--accent-teal) !important;
+    background: transparent !important;
+    color: var(--accent-blue) !important;
+    border-bottom: 1px solid var(--accent-blue) !important;
 }
 
 /* ---------- Model comparison table (custom HTML) ---------- */
 .model-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.88rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-family: 'Lora', serif;
+    border: 1px solid var(--border-dark);
 }
 
 .model-table th {
-    background: var(--bg-surface);
-    color: var(--text-muted);
-    font-size: 0.72rem;
+    background: var(--bg-raised);
+    color: var(--text-primary);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 0.75rem 1rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-dark);
+    border-right: 1px solid var(--border-medium);
 }
 
 .model-table td {
-    padding: 0.75rem 1rem;
+    padding: 1rem;
     color: var(--text-primary);
-    border-bottom: 1px solid var(--border-faint);
-    font-family: 'Fira Code', monospace;
+    border-bottom: 1px solid var(--border-medium);
+    border-right: 1px solid var(--border-medium);
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 0.85rem;
 }
 
 .model-table tr:last-child td { border-bottom: none; }
-.model-table tr:hover td { background: var(--accent-teal-dim); }
+.model-table tr:hover td { background: var(--bg-raised); }
 
-.model-table .best-row td { color: var(--accent-teal); }
+.model-table .best-row td { 
+    background: var(--bg-accent);
+    color: var(--text-primary);
+    font-weight: 600;
+}
 
 /* ---------- Tag / Badge ---------- */
 .tag {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.4rem;
     padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    font-size: 0.72rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid var(--border-dark);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    box-shadow: 1px 1px 0px 0px #1A1A1A;
 }
 
-.tag-teal   { background: var(--accent-teal-dim);   color: var(--accent-teal);   border: 1px solid rgba(94,234,212,0.25); }
-.tag-amber  { background: var(--accent-amber-dim);  color: var(--accent-amber);  border: 1px solid rgba(251,191,36,0.25); }
-.tag-rose   { background: var(--accent-rose-dim);   color: var(--accent-rose);   border: 1px solid rgba(251,113,133,0.25); }
-.tag-green  { background: var(--accent-green-dim);  color: var(--accent-green);  border: 1px solid rgba(74,222,128,0.2); }
+.tag-teal   { border-color: var(--accent-blue); color: var(--accent-blue); }
+.tag-amber  { background: var(--accent-sepia); }
+.tag-rose   { border-color: var(--accent-red); color: var(--accent-red); }
+.tag-green  { border-color: #2E8B57; color: #2E8B57; }
 
 /* ---------- Page fade-in ---------- */
 @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(5px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
 .page-enter {
-    animation: fadeUp var(--dur-slow) var(--ease-out) both;
+    animation: fadeUp var(--dur-med) var(--ease-out) both;
 }
 
 /* ---------- Mono numbers inside regular text ---------- */
 .mono {
-    font-family: 'Fira Code', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 0.9em;
 }
 
 /* ---------- Caption / footer ---------- */
 .app-footer {
     text-align: center;
-    padding: 2.5rem 0 1rem;
-    color: var(--text-muted);
-    font-size: 0.78rem;
-    letter-spacing: 0.02em;
+    padding: 3rem 0 1.5rem;
+    color: var(--text-secondary);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-top: 1px solid var(--border-dark);
+    margin-top: 3rem;
 }
 
 .app-footer a {
-    color: var(--accent-teal);
-    text-decoration: none;
+    color: var(--accent-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 /* ---------- Streamlit native caption ---------- */
 .stCaption {
-    color: var(--text-muted) !important;
-    font-size: 0.78rem !important;
+    color: var(--text-secondary) !important;
+    font-family: 'Lora', serif !important;
+    font-size: 0.85rem !important;
+    font-style: italic !important;
 }
