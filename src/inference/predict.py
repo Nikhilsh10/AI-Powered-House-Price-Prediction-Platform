@@ -1,62 +1,49 @@
 # src/inference/predict.py
 """Prediction module for the House Price Prediction platform.
-Implements model loading, preprocessing, price prediction and confidence interval.
-The functions are deliberately lightweight to be called from Streamlit UI.
+
+Implements model loading, preprocessing, price prediction and confidence
+interval. The functions are deliberately lightweight to be called from
+the Streamlit UI.
 """
 import json
 import joblib
 import pandas as pd
 import numpy as np
-from pathlib import Path
 from typing import Dict, Any
 
-# Deterministic project root – this file is at <repo>/src/inference/predict.py
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-MODEL_PATH = PROJECT_ROOT / "artifacts" / "model.pkl"
-PREPROCESSOR_PATH = PROJECT_ROOT / "artifacts" / "preprocessor.pkl"
+from src.config import ARTIFACTS_DIR
+
+MODEL_PATH = ARTIFACTS_DIR / "model.pkl"
+PREPROCESSOR_PATH = ARTIFACTS_DIR / "preprocessor.pkl"
 
 
 def load_model() -> Any:
-    """Load the trained XGBoost model.
-    Returns the model object (XGBRegressor) or raises FileNotFoundError.
-    """
+    """Load the trained model. Raises FileNotFoundError if missing."""
     if not MODEL_PATH.exists():
         raise FileNotFoundError(f"Model file not found at {MODEL_PATH}")
-    model = joblib.load(MODEL_PATH)
-    return model
+    return joblib.load(MODEL_PATH)
 
 
 def load_preprocessor() -> Any:
-    """Load the preprocessing pipeline (e.g., StandardScaler, ColumnTransformer).
-    Returns the preprocessor object.
-    """
+    """Load the preprocessing pipeline. Raises FileNotFoundError if missing."""
     if not PREPROCESSOR_PATH.exists():
         raise FileNotFoundError(f"Preprocessor file not found at {PREPROCESSOR_PATH}")
-    preproc = joblib.load(PREPROCESSOR_PATH)
-    return preproc
+    return joblib.load(PREPROCESSOR_PATH)
 
 
 def _engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     """Apply the same feature engineering used during training.
-    Expected columns (may vary with dataset):
-        - location (categorical)
-        - size (numeric, total_sqft)
-        - bhk (numeric, number of bedrooms)
-        - bath (numeric, number of bathrooms)
-        - other numeric columns present in training.
-    Returns a DataFrame ready for the preprocessor.
+
+    Expected input columns: location, size, bhk, bath.
+    Derives total_rooms and handles size ranges like "1195 - 1440".
     """
     df = df.copy()
-    # Ensure numeric conversion for size – some rows contain ranges like "1195 - 1440"
     if "size" in df.columns:
-        # Convert possible range strings to the average of the two numbers
         def parse_size(val):
             if isinstance(val, str) and "-" in val:
                 try:
                     parts = val.split("-")
-                    low = float(parts[0].strip())
-                    high = float(parts[1].strip())
-                    return (low + high) / 2.0
+                    return (float(parts[0].strip()) + float(parts[1].strip())) / 2.0
                 except Exception:
                     return np.nan
             try:
@@ -64,47 +51,38 @@ def _engineer_features(df: pd.DataFrame) -> pd.DataFrame:
             except Exception:
                 return np.nan
         df["size"] = df["size"].apply(parse_size)
-    # Derive total_rooms if not present
     if "bhk" in df.columns and "bath" in df.columns:
         df["total_rooms"] = df["bhk"] + df["bath"]
     return df
 
 
 def preprocess_input(input_data: Dict[str, Any]) -> np.ndarray:
-    """Convert raw input dictionary from UI into a preprocessed feature array.
-    The keys must correspond to the training feature names (excluding the target).
-    Returns a NumPy array ready for model.predict.
-    """
+    """Convert raw input dict from UI into a preprocessed feature array."""
     df = pd.DataFrame([input_data])
     df = _engineer_features(df)
     preprocessor = load_preprocessor()
-    X_processed = preprocessor.transform(df)
-    return X_processed
+    return preprocessor.transform(df)
 
 
 def predict_price(input_data: Dict[str, Any]) -> Dict[str, float]:
-    """Predict house price and a simple confidence interval.
-    The interval is approximated as ±5% of the predicted price –
-    suitable for demonstration; replace with quantile regression for production.
-    Returns a dictionary with keys: predicted_price, lower_bound, upper_bound.
+    """Predict house price and return a +/-5% confidence interval.
+
+    Returns a dict with keys: predicted_price, lower_bound, upper_bound.
     """
     model = load_model()
     X = preprocess_input(input_data)
-    pred = model.predict(X)[0]
-    # Simple +-5% interval
-    lower = pred * 0.95
-    upper = pred * 1.05
+    pred = float(model.predict(X)[0])
     return {
-        "predicted_price": float(pred),
-        "lower_bound": float(lower),
-        "upper_bound": float(upper),
+        "predicted_price": pred,
+        "lower_bound": pred * 0.95,
+        "upper_bound": pred * 1.05,
     }
 
-# Helper for command-line testing
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Predict house price from JSON input")
-    parser.add_argument("--json", type=str, required=True, help="Path to JSON file with input fields")
+    parser.add_argument("--json", type=str, required=True, help="Path to JSON file")
     args = parser.parse_args()
     with open(args.json, "r") as f:
         data = json.load(f)

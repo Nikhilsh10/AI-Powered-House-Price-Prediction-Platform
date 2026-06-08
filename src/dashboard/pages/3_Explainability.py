@@ -1,54 +1,54 @@
 # src/dashboard/pages/3_Explainability.py
-"""Explainability page – SHAP visualisations for the selected prediction.
+"""Explainability page — SHAP visualisations for the latest prediction.
 
-This page relies on the artefacts produced by the training pipeline:
-- artifacts/model.pkl (required)
-- artifacts/preprocessor.pkl (required)
-- artifacts/metadata.json (required)
+Required artifacts:
+  - artifacts/model.pkl
+  - artifacts/preprocessor.pkl
 
-Optionally, if a serialized SHAP explainer is available at
-artifacts/shap_explainer.pkl, we will render SHAP summary and waterfall
-plots. If it is missing we fall back to a simple textual recap.
+Optional artifacts:
+  - artifacts/shap_explainer.pkl  (if absent, a TreeExplainer is built on-demand)
+
+The page reads the latest prediction from st.session_state, which is
+populated by the Home page when a prediction is made.
 """
 
 import streamlit as st
-from pathlib import Path
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
-# Deterministic project root – this file is at <repo>/src/dashboard/pages/3_Explainability.py
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+from src.config import ARTIFACTS_DIR
 
 # ---------------------------------------------------------------------------
-# Required artefacts
+# Required artifact guard
 # ---------------------------------------------------------------------------
-artifacts_dir = PROJECT_ROOT / "artifacts"
-model_path = artifacts_dir / "model.pkl"
-preproc_path = artifacts_dir / "preprocessor.pkl"
-metadata_path = artifacts_dir / "metadata.json"
+_model_path  = ARTIFACTS_DIR / "model.pkl"
+_preproc_path = ARTIFACTS_DIR / "preprocessor.pkl"
+_missing = [str(p) for p in (_model_path, _preproc_path) if not p.exists()]
 
-missing_required = []
-for p in (model_path, preproc_path, metadata_path):
-    if not p.exists():
-        missing_required.append(str(p))
-
-if missing_required:
-    st.error(f"Missing required artefacts:\n" + "\n".join(missing_required))
+if _missing:
+    st.error("**Missing required artifacts:**\n\n" + "\n".join(f"- `{p}`" for p in _missing))
     st.stop()
 
-# Optional SHAP explainer
-shap_path = artifacts_dir / "shap_explainer.pkl"
-
 # ---------------------------------------------------------------------------
-# Session-state handling – ensure a prediction has been made on Home page
+# Session-state guard
 # ---------------------------------------------------------------------------
-required_keys = ["latest_prediction", "latest_result"]
-missing_keys = [k for k in required_keys if k not in st.session_state]
-if missing_keys:
-    st.info("Run a prediction on the Home page first.")
+if "latest_prediction" not in st.session_state or "latest_result" not in st.session_state:
+    st.markdown("""
+    <div style='text-align:center; padding:4rem 1rem; color:#4f5668;'>
+        <div style='font-size:2.5rem; margin-bottom:0.75rem; opacity:0.4;'>🔍</div>
+        <div style='font-size:0.92rem; font-weight:500; color:#8a93a8;'>
+            No prediction yet
+        </div>
+        <div style='font-size:0.82rem; margin-top:0.4rem;'>
+            Go to <strong style='color:#5eead4;'>Home</strong> and make a prediction first.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     st.stop()
 
 input_data = st.session_state["latest_prediction"]
-result = st.session_state["latest_result"]
+result     = st.session_state["latest_result"]
 
 # ---------------------------------------------------------------------------
 # Cached resource loaders
@@ -56,92 +56,168 @@ result = st.session_state["latest_result"]
 @st.cache_resource
 def load_model():
     import joblib
-    return joblib.load(model_path)
+    return joblib.load(_model_path)
+
 
 @st.cache_resource
 def load_preprocessor():
     import joblib
-    return joblib.load(preproc_path)
+    return joblib.load(_preproc_path)
+
 
 @st.cache_resource
-def load_shap_explainer():
+def load_or_build_explainer():
+    """Load serialised SHAP explainer if present, else build TreeExplainer."""
+    import shap
+    shap_path = ARTIFACTS_DIR / "shap_explainer.pkl"
     if shap_path.exists():
         import joblib
         return joblib.load(shap_path)
-    return None
-
-# ---------------------------------------------------------------------------
-# UI layout
-# ---------------------------------------------------------------------------
-st.title("🔍 Explainability")
-st.markdown("---")
-
-st.subheader("Prediction recap")
-st.write(f"**Price:** {result['predicted_price']:.2f} Lakh₹")
-st.write(
-    f"**Confidence interval:** {result['lower_bound']:.2f} – {result['upper_bound']:.2f}"
-)
-
-# ---------------------------------------------------------------------------
-# SHAP visualisations (if explainer available)
-# ---------------------------------------------------------------------------
-explainer = load_shap_explainer()
-if explainer:
     model = load_model()
-    preproc = load_preprocessor()
+    if hasattr(model, "get_booster") or hasattr(model, "feature_name_"):
+        return shap.TreeExplainer(model)
+    return None  # KernelExplainer requires background data; skip for now
 
-    # Prepare data for SHAP
-    import pandas as pd
-    df = pd.DataFrame([input_data])
-    df_processed = preproc.transform(df)
 
-    # Compute SHAP values – works for both TreeExplainer and KernelExplainer
-    shap_values = explainer.shap_values(df_processed)
+# ---------------------------------------------------------------------------
+# Page header
+# ---------------------------------------------------------------------------
+st.markdown("""
+<div class='page-enter'>
+<h1 style='margin-bottom:0.2rem;'>
+    Model <span style='background:linear-gradient(135deg,#5eead4,#fbbf24);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;'>Explainability</span>
+</h1>
+<p style='color:#8a93a8; font-size:0.92rem; margin-top:0; margin-bottom:1.75rem;'>
+    SHAP-based feature attribution for your latest prediction
+</p>
+</div>
+""", unsafe_allow_html=True)
 
-    # -------------------------------------------------------------------
-    # Summary plot
-    # -------------------------------------------------------------------
-    st.subheader("SHAP Summary Plot")
-    import shap
-    fig = plt.figure()
-    shap.summary_plot(shap_values, df_processed, show=False)
-    st.pyplot(fig)
-    plt.close(fig)
+# ---------------------------------------------------------------------------
+# Section 1 — Prediction Recap
+# ---------------------------------------------------------------------------
+st.markdown("""
+<div style='display:flex; align-items:center; gap:0.6rem; margin:0.5rem 0 1rem;'>
+    <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
+                text-transform:uppercase; color:#4f5668;'>Prediction Recap</div>
+    <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+</div>
+""", unsafe_allow_html=True)
 
-    # -------------------------------------------------------------------
-    # Waterfall plot for this single instance
-    # -------------------------------------------------------------------
-    st.subheader("SHAP Waterfall (Feature impact)")
-    fig_wf = plt.figure()
-    shap.waterfall_plot(
-        shap.Explanation(
-            values=shap_values[0],
-            data=df_processed[0],
-            feature_names=df.columns.tolist(),
-        )
-    )
-    st.pyplot(fig_wf)
-    plt.close(fig_wf)
+pred  = result["predicted_price"]
+lower = result["lower_bound"]
+upper = result["upper_bound"]
 
-    # -------------------------------------------------------------------
-    # Feature contribution table – sorted by absolute impact
-    # -------------------------------------------------------------------
-    st.subheader("Feature Contributions")
-    import numpy as np
-    # Preferred feature names from the preprocessor after transformation
+c1, c2, c3 = st.columns(3)
+with c1:
+    st.markdown(f"""
+    <div class='kpi-card kpi-accent-teal'>
+        <div class='kpi-label'>Predicted Price</div>
+        <div class='kpi-value'>₹{pred:,.2f}L</div>
+    </div>""", unsafe_allow_html=True)
+with c2:
+    st.markdown(f"""
+    <div class='kpi-card kpi-accent-indigo'>
+        <div class='kpi-label'>Lower Bound</div>
+        <div class='kpi-value'>{lower:,.2f}L</div>
+    </div>""", unsafe_allow_html=True)
+with c3:
+    st.markdown(f"""
+    <div class='kpi-card kpi-accent-amber'>
+        <div class='kpi-label'>Upper Bound</div>
+        <div class='kpi-value'>{upper:,.2f}L</div>
+    </div>""", unsafe_allow_html=True)
+
+# Input summary
+with st.expander("Input features used for this prediction", expanded=False):
+    st.json(input_data)
+
+# ---------------------------------------------------------------------------
+# Section 2 — SHAP visualisations
+# ---------------------------------------------------------------------------
+st.markdown("<div style='height:1.5rem;'></div>", unsafe_allow_html=True)
+st.markdown("""
+<div style='display:flex; align-items:center; gap:0.6rem; margin:0.5rem 0 1rem;'>
+    <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
+                text-transform:uppercase; color:#4f5668;'>SHAP Analysis</div>
+    <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+</div>
+""", unsafe_allow_html=True)
+
+try:
+    preproc  = load_preprocessor()
+    explainer = load_or_build_explainer()
+
+    # Transform the single input instance
+    df_input     = pd.DataFrame([input_data])
+    df_processed = preproc.transform(df_input)
+
+    # Resolve feature names from the preprocessor (post-transform)
     try:
-        feature_names = preproc.get_feature_names_out()
+        feature_names = list(preproc.get_feature_names_out())
     except Exception:
-        # Fallback to generic feature_0, feature_1, ... based on transformed shape
         feature_names = [f"feature_{i}" for i in range(df_processed.shape[1])]
-    contrib_df = pd.DataFrame({
-        "feature": feature_names,
-        "impact": shap_values[0],
-    })
-    # Add absolute impact for sorting
-    contrib_df["abs_impact"] = contrib_df["impact"].abs()
-    # Sort by absolute impact descending and keep top 15 features
-    contrib_df = contrib_df.sort_values("abs_impact", ascending=False).head(15)
-    st.dataframe(contrib_df[["feature", "impact", "abs_impact"]])
-else:
-    st.info("SHAP explainer not found – only the textual prediction recap is shown.")
+
+    if explainer is not None:
+        import shap
+        shap_values = explainer.shap_values(df_processed)
+
+        # Waterfall plot (single instance)
+        st.subheader("Feature Impact — Waterfall")
+        fig_wf, ax_wf = plt.subplots(figsize=(9, max(4, len(feature_names) * 0.35)))
+        fig_wf.patch.set_facecolor("#0d0f14")
+        ax_wf.set_facecolor("#0d0f14")
+
+        expected_val = (
+            explainer.expected_value[0]
+            if isinstance(explainer.expected_value, (list, np.ndarray))
+            else explainer.expected_value
+        )
+        sv = shap_values[0] if shap_values.ndim > 1 else shap_values
+
+        expl = shap.Explanation(
+            values=sv,
+            base_values=expected_val,
+            data=df_processed[0],
+            feature_names=feature_names,
+        )
+        shap.plots.waterfall(expl, show=False, max_display=15)
+        plt.tight_layout()
+        st.pyplot(fig_wf, use_container_width=True)
+        plt.close(fig_wf)
+
+        # Feature contribution table
+        st.markdown("<div style='height:1rem;'></div>", unsafe_allow_html=True)
+        st.subheader("Feature Contributions Table")
+
+        contrib_df = pd.DataFrame({
+            "Feature": feature_names,
+            "SHAP Value": sv,
+            "Direction": ["↑ Increases price" if v > 0 else "↓ Decreases price" for v in sv],
+        })
+        contrib_df["Abs SHAP"] = contrib_df["SHAP Value"].abs()
+        contrib_df = contrib_df.sort_values("Abs SHAP", ascending=False).head(15)
+
+        st.dataframe(
+            contrib_df[["Feature", "SHAP Value", "Direction"]].reset_index(drop=True),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    else:
+        st.info(
+            "SHAP explainer could not be initialised for this model type. "
+            "The textual prediction recap above is still accurate."
+        )
+
+except Exception as e:
+    st.error(f"**SHAP computation failed:** {e}")
+    st.caption("This is non-critical — your prediction on the Home page is unaffected.")
+
+st.markdown("""
+<div class='app-footer'>
+    SHAP values computed using the TreeExplainer · Values in Lakh ₹
+</div>
+""", unsafe_allow_html=True)

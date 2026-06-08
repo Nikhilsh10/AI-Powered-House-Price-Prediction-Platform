@@ -2,8 +2,11 @@
 """Main entry point for the Streamlit dashboard.
 
 Streamlit multipage apps automatically discover Python files inside the
-`pages/` subdirectory.  This file configures the page, injects CSS,
-and ensures the repo root is on sys.path for all downstream imports.
+``pages/`` subdirectory. This file:
+  1. Ensures the repo root is on sys.path before any project imports.
+  2. Configures page-level settings (must be first Streamlit call).
+  3. Injects the custom CSS stylesheet.
+  4. Renders the sidebar branding.
 """
 
 import sys
@@ -11,10 +14,10 @@ from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Ensure repo root is on sys.path BEFORE any project imports.
-# This file lives at:  <repo>/src/dashboard/app.py
-#   parents[0] = <repo>/src/dashboard
-#   parents[1] = <repo>/src
-#   parents[2] = <repo>                ← repo root
+#   This file lives at:  <repo>/src/dashboard/app.py
+#     parents[0] = <repo>/src/dashboard
+#     parents[1] = <repo>/src
+#     parents[2] = <repo>          ← repo root
 # ---------------------------------------------------------------------------
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
@@ -23,7 +26,7 @@ if str(_REPO_ROOT) not in sys.path:
 import streamlit as st
 
 # ---------------------------------------------------------------------------
-# Page configuration (must be the first Streamlit command)
+# Page configuration — must be the FIRST Streamlit command
 # ---------------------------------------------------------------------------
 st.set_page_config(
     page_title="House Price Prediction Platform",
@@ -45,21 +48,28 @@ if _CSS_PATH.exists():
 with st.sidebar:
     st.markdown(
         """
-        <div style='text-align:center; padding: 1rem 0 0.5rem 0;'>
-            <span style='font-size:2rem;'>🏠</span>
-            <h3 style='margin:0.25rem 0 0 0; font-weight:700; font-size:1rem;
-                        background: linear-gradient(135deg,#58a6ff,#3fb9a8);
-                        -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-                        background-clip:text;'>
-                Price Prediction
-            </h3>
-            <p style='color:#8b949e; font-size:0.75rem; margin:0.25rem 0 0 0;'>
-                Bengaluru Housing Dataset
-            </p>
+        <div style='text-align:center; padding:1.25rem 0 1rem 0;'>
+            <div style='font-size:2.2rem; margin-bottom:0.35rem;'>🏠</div>
+            <div style='
+                font-family: Space Grotesk, sans-serif;
+                font-size: 0.95rem;
+                font-weight: 700;
+                letter-spacing: -0.01em;
+                background: linear-gradient(135deg, #5eead4, #fbbf24);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 0.2rem;
+            '>Price Intelligence</div>
+            <div style='
+                font-size: 0.72rem;
+                color: #4f5668;
+                font-weight: 500;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+            '>Bengaluru Housing</div>
         </div>
-        <hr style='border:none; height:1px;
-                    background:linear-gradient(90deg,transparent,rgba(139,148,158,0.2),transparent);
-                    margin:0.75rem 0;'>
+        <div style='height:1px; background: rgba(255,255,255,0.06); margin:0.5rem 0 1rem 0;'></div>
         """,
         unsafe_allow_html=True,
     )

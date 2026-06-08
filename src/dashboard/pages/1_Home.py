@@ -1,117 +1,215 @@
 # src/dashboard/pages/1_Home.py
-"""Home page – property price prediction.
+"""Home page — property price prediction.
 
-Collect user inputs, call the inference module, and display the predicted price
-with a confidence interval and a visual gauge indicating prediction confidence.
+Collects user inputs, calls the inference module, and displays the
+predicted price with a confidence interval and visual confidence gauge.
 """
 
 import streamlit as st
-import json
-from src.config import PROJECT_ROOT, ARTIFACTS_DIR
-
-# ---------------------------------------------------------------------------
-# Defensive checks for required artifacts using central config
-# ---------------------------------------------------------------------------
-model_path = ARTIFACTS_DIR / "model.pkl"
-preprocessor_path = ARTIFACTS_DIR / "preprocessor.pkl"
-features_path = ARTIFACTS_DIR / "feature_columns.json"
-metadata_path = ARTIFACTS_DIR / "metadata.json"
-
-missing = []
-for p in (model_path, preprocessor_path, features_path, metadata_path):
-    if not p.exists():
-        missing.append(str(p))
-if missing:
-    st.error("Missing artifact files:\n" + "\n".join(missing))
-    st.stop()
-
-# Import the deterministic predictor
+from src.config import ARTIFACTS_DIR
 from src.inference.predict import predict_price
 
 # ---------------------------------------------------------------------------
-# Helper – confidence gauge based on interval width ratio
+# Artifact guard — fail fast with a clear message
+# ---------------------------------------------------------------------------
+_model_path = ARTIFACTS_DIR / "model.pkl"
+_preproc_path = ARTIFACTS_DIR / "preprocessor.pkl"
+_missing = [str(p) for p in (_model_path, _preproc_path) if not p.exists()]
+
+if _missing:
+    st.error("**Missing required artifact files:**\n\n" + "\n".join(f"- `{p}`" for p in _missing))
+    st.stop()
+
+
+# ---------------------------------------------------------------------------
+# Helpers
 # ---------------------------------------------------------------------------
 def _confidence_gauge(lower: float, upper: float, pred: float) -> str:
-    """Return an HTML snippet for a gauge.
+    """Return an HTML confidence gauge block.
 
-    The gauge width is proportional to the relative interval size.
+    Design note: the fill represents confidence (INVERSE of interval width).
+    A tight interval → wide fill (high confidence).
+    A wide interval → narrow fill (low confidence).
     """
-    width_percent = min(100, max(0, ((upper - lower) / pred) * 100))
-    # Determine confidence level
-    if width_percent <= 5:
-        color = "#4caf50"  # green – high confidence
+    if pred == 0:
+        return ""
+    interval_ratio = (upper - lower) / pred  # 0.10 = 10% spread
+    # Map 10% spread → 100% confidence, 30%+ spread → 0%
+    confidence_pct = max(0.0, min(100.0, (1 - interval_ratio / 0.30) * 100))
+
+    if confidence_pct >= 70:
+        color = "#5eead4"   # teal — high
         label = "High"
-    elif width_percent <= 12:
-        color = "#ffeb3b"  # amber – medium
+        tag_cls = "tag-teal"
+    elif confidence_pct >= 40:
+        color = "#fbbf24"   # amber — medium
         label = "Medium"
+        tag_cls = "tag-amber"
     else:
-        color = "#f44336"  # red – low
+        color = "#fb7185"   # rose — low
         label = "Low"
-    gauge_html = f"""
-    <div class='confidence-gauge'>
-        <div style='width:{width_percent}%; background:{color};'></div>
+        tag_cls = "tag-rose"
+
+    return f"""
+    <div class='confidence-wrap'>
+        <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;'>
+            <span style='font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:#4f5668; font-weight:600;'>
+                Prediction Confidence
+            </span>
+            <span class='tag {tag_cls}'>{label}</span>
+        </div>
+        <div class='confidence-track'>
+            <div class='confidence-fill' style='width:{confidence_pct:.1f}%; background:{color};'></div>
+        </div>
+        <div style='font-size:0.75rem; color:#4f5668; margin-top:0.3rem; font-family:Space Mono,monospace;'>
+            Range: {lower:.2f}L – {upper:.2f}L
+        </div>
     </div>
-    <div style='text-align:center; margin-top:4px; color:{color}; font-weight:600'>Confidence: {label}</div>
     """
-    return gauge_html
+
 
 # ---------------------------------------------------------------------------
-# Render UI
+# Page render
 # ---------------------------------------------------------------------------
 def render():
-    st.title("🏠 House Price Prediction")
-    st.markdown("---")
+    # Page title
+    st.markdown("""
+    <div class='page-enter'>
+    <h1 style='margin-bottom:0.2rem;'>
+        House Price <span style='background:linear-gradient(135deg,#5eead4,#fbbf24);
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+        background-clip:text;'>Prediction</span>
+    </h1>
+    <p style='color:#8a93a8; font-size:0.92rem; margin-top:0; margin-bottom:1.75rem;'>
+        Enter property details below to get an instant price estimate
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with st.form(key="price_form"):
-        st.subheader("Property Details")
-        location = st.text_input("Location", placeholder="e.g. Indiranagar, Bangalore")
-        total_sqft = st.number_input("Total Sqft", min_value=100.0, step=10.0)
-        bhk = st.selectbox("BHK (Bedrooms)", options=[i for i in range(1, 7)])
-        bathrooms = st.selectbox("Bathrooms", options=[i for i in range(1, 7)])
-        submit = st.form_submit_button("Predict Price")
+    # ---- Input Form --------------------------------------------------------
+    with st.form(key="price_form", clear_on_submit=False):
+        st.markdown("""
+        <div style='display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;'>
+            <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#4f5668;'>Property Details</div>
+            <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    if submit:
+        col_a, col_b = st.columns(2)
+        with col_a:
+            location = st.text_input(
+                "Location",
+                placeholder="e.g. Indiranagar, Koramangala",
+                help="Neighbourhood or locality name in Bengaluru",
+            )
+            total_sqft = st.number_input(
+                "Total Area (sqft)",
+                min_value=100.0,
+                max_value=50000.0,
+                value=1200.0,
+                step=50.0,
+                help="Total built-up area in square feet",
+            )
+        with col_b:
+            bhk = st.selectbox(
+                "BHK",
+                options=list(range(1, 7)),
+                index=2,
+                help="Number of bedrooms",
+            )
+            bathrooms = st.selectbox(
+                "Bathrooms",
+                options=list(range(1, 7)),
+                index=1,
+                help="Number of bathrooms",
+            )
+
+        submitted = st.form_submit_button("Estimate Price →", use_container_width=True)
+
+    # ---- Result Display ----------------------------------------------------
+    if submitted:
+        if not location.strip():
+            st.warning("Please enter a location to continue.")
+            return
+
         input_data = {
-            "location": location,
+            "location": location.strip(),
             "size": total_sqft,
             "bhk": bhk,
             "bath": bathrooms,
         }
-        try:
-            result = predict_price(input_data)
-            st.session_state["latest_prediction"] = input_data
-            st.session_state["latest_result"] = result
 
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown(
-                    f"""
-                    <div class='glass-card'>
-                        <h3>Estimated Price</h3>
-                        <p style='font-size:2rem; font-weight:600'>{result['predicted_price']:.2f} Lakh₹</p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-            with col2:
-                lower = result["lower_bound"]
-                upper = result["upper_bound"]
-                st.markdown(
-                    f"""
-                    <div class='glass-card'>
-                        <h3>Confidence Range</h3>
-                        <p>{lower:.2f}L – {upper:.2f}L</p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+        with st.spinner("Running inference…"):
+            try:
+                result = predict_price(input_data)
+            except Exception as e:
+                st.error(f"**Prediction failed:** {e}")
+                return
 
-            gauge_html = _confidence_gauge(lower, upper, result["predicted_price"])
-            st.markdown(gauge_html, unsafe_allow_html=True)
-        except Exception as e:
-            st.error(f"Prediction failed: {e}")
+        # Persist for Explainability page
+        st.session_state["latest_prediction"] = input_data
+        st.session_state["latest_result"] = result
 
-    st.markdown("---")
-    st.caption("*Prediction confidence gauge is based on the width of the ±5% interval.*")
+        pred  = result["predicted_price"]
+        lower = result["lower_bound"]
+        upper = result["upper_bound"]
+
+        st.markdown("<div style='height:1.5rem;'></div>", unsafe_allow_html=True)
+
+        # Hero result card
+        st.markdown(f"""
+        <div class='result-hero'>
+            <div class='result-label'>Estimated Price</div>
+            <div class='result-price'>₹{pred:,.2f}L</div>
+            {_confidence_gauge(lower, upper, pred)}
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Breakdown columns
+        st.markdown("<div style='height:1rem;'></div>", unsafe_allow_html=True)
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.markdown(f"""
+            <div class='kpi-card kpi-accent-teal'>
+                <div class='kpi-label'>Predicted (Lakh ₹)</div>
+                <div class='kpi-value'>{pred:,.2f}</div>
+            </div>""", unsafe_allow_html=True)
+        with c2:
+            st.markdown(f"""
+            <div class='kpi-card kpi-accent-indigo'>
+                <div class='kpi-label'>Lower Bound</div>
+                <div class='kpi-value'>{lower:,.2f}</div>
+            </div>""", unsafe_allow_html=True)
+        with c3:
+            st.markdown(f"""
+            <div class='kpi-card kpi-accent-amber'>
+                <div class='kpi-label'>Upper Bound</div>
+                <div class='kpi-value'>{upper:,.2f}</div>
+            </div>""", unsafe_allow_html=True)
+
+        st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
+        st.caption(
+            "Confidence interval is approximated as ±5% of the predicted price. "
+            "Navigate to **Explainability** to see SHAP feature contributions."
+        )
+
+    else:
+        # Empty state — visual affordance
+        st.markdown("""
+        <div style='text-align:center; padding:3rem 1rem; color:#4f5668;'>
+            <div style='font-size:2.5rem; margin-bottom:0.75rem; opacity:0.4;'>🏠</div>
+            <div style='font-size:0.88rem; font-weight:500; letter-spacing:0.04em;'>
+                Fill in the form and click <strong style='color:#8a93a8;'>Estimate Price →</strong>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class='app-footer'>
+        Powered by XGBoost &amp; LightGBM · Bengaluru Housing Dataset
+    </div>
+    """, unsafe_allow_html=True)
+
 
 render()

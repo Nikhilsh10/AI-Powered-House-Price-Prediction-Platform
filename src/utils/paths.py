@@ -1,63 +1,26 @@
+# src/utils/paths.py
+"""Project path utilities.
+
+Prefer importing paths directly from ``src.config``. This module
+exists for backward compatibility with tests that call get_project_root().
+"""
+from pathlib import Path
 from functools import lru_cache
-from pathlib import Path
+
 
 @lru_cache(maxsize=1)
 def get_project_root() -> Path:
     """Return the repository root directory.
-    It is identified by the presence of the ``src`` folder, ``data`` folder,
-    and the ``requirements.txt`` file – all of which exist only at the project root.
+
+    Identified by the co-presence of ``src/``, ``data/``, and
+    ``requirements.txt`` — all three exist only at the project root.
     """
     current = Path(__file__).resolve()
     for parent in [current, *current.parents]:
-        if (parent / "src").exists() and (parent / "data").exists() and (parent / "requirements.txt").exists():
+        if (
+            (parent / "src").exists()
+            and (parent / "data").exists()
+            and (parent / "requirements.txt").exists()
+        ):
             return parent
     raise RuntimeError("Project root not found")
-
-@lru_cache(maxsize=1)
-def repo_root() -> Path:
-    """Return the repository root directory based on file location.
-    Assumes this file resides in <repo>/src/utils/paths.py.
-    """
-    return Path(__file__).resolve().parents[3]
-
-from pathlib import Path
-
-@lru_cache(maxsize=1)
-def get_project_root() -> Path:
-    """Return the repository root directory.
-    It is identified by the presence of the ``src`` folder, ``data`` folder,
-    and the ``requirements.txt`` file – all of which exist only at the project root.
-    """
-    current = Path(__file__).resolve()
-    for parent in [current, *current.parents]:
-        if (parent / "src").exists() and (parent / "data").exists() and (parent / "requirements.txt").exists():
-            return parent
-    raise RuntimeError("Project root not found")
-
-@lru_cache(maxsize=1)
-def repo_root() -> Path:
-    """Return the repository root directory based on file location.
-    Assumes this file resides in <repo>/src/utils/paths.py.
-    """
-    return Path(__file__).resolve().parents[3]
-
-from pathlib import Path
-
-@lru_cache(maxsize=1)
-def get_project_root() -> Path:
-    """Return the repository root directory.
-    It is identified by the presence of the ``src`` folder, ``data`` folder,
-    and the ``requirements.txt`` file – all of which exist only at the project root.
-    """
-    current = Path(__file__).resolve()
-    for parent in [current, *current.parents]:
-        if (parent / "src").exists() and (parent / "data").exists() and (parent / "requirements.txt").exists():
-            return parent
-    raise RuntimeError("Project root not found")
-
-@lru_cache(maxsize=1)
-def repo_root() -> Path:
-    """Return the repository root directory based on file location.
-    Assumes this file resides in <repo>/src/utils/paths.py.
-    """
-    return Path(__file__).resolve().parents[3]

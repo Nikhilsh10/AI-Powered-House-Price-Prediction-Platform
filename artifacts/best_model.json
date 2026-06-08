@@ -2,9 +2,9 @@
   "best_model": "lightgbm",
   "selection_metric": "r2",
   "metrics": {
-    "r2": NaN,
+    "r2": null,
     "mae": 12.5,
     "rmse": 12.5,
-    "mape": 11.363636363636363
+    "mape": 11.36
   }
 }
