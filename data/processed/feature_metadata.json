@@ -1,10 +1,14 @@
 {
   "columns": {
+    "area_type": "object",
+    "availability": "object",
     "location": "object",
-    "size": "int64",
-    "bhk": "int64",
-    "bath": "int64",
+    "size": "object",
+    "society": "object",
+    "total_sqft": "object",
+    "bath": "float64",
+    "balcony": "float64",
     "price": "float64"
   },
-  "row_count": 5
+  "row_count": 10967
 }

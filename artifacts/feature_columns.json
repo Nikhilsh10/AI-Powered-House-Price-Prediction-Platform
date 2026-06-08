@@ -1,17 +1,25 @@
 {
   "numerical_features": [
-    "size",
-    "bhk",
     "bath",
+    "balcony",
     "price"
   ],
   "categorical_features": [
-    "location"
-  ],
-  "model_input_features": [
+    "area_type",
+    "availability",
     "location",
     "size",
-    "bhk",
-    "bath"
+    "society",
+    "total_sqft"
+  ],
+  "model_input_features": [
+    "area_type",
+    "availability",
+    "location",
+    "size",
+    "society",
+    "total_sqft",
+    "bath",
+    "balcony"
   ]
 }

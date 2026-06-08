@@ -1,8 +1,8 @@
 {
   "project": "House Price Prediction Platform",
   "dataset": "Bengaluru Housing",
-  "model_type": "lightgbm",
-  "feature_count": 4,
-  "training_date": "2026-06-05",
+  "model_type": "xgboost",
+  "feature_count": 8,
+  "training_date": "2026-06-08",
   "version": "1.0.0"
 }

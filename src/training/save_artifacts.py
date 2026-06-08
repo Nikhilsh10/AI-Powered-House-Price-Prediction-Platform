@@ -11,17 +11,18 @@ from pathlib import Path
 import joblib
 
 # Import configuration paths from config.py
-from src import config
+from src.training import config as t_config
+from src import config as g_config
 
 # Use config variables
-XGB_MODEL_PATH = config.XGB_MODEL_PATH
-LGB_MODEL_PATH = config.LGB_MODEL_PATH
-PREPROCESSOR_PATH = config.PREPROCESSOR_PATH
-METRICS_PATH = config.METRICS_PATH
-BEST_MODEL_PATH = config.BEST_MODEL_PATH
-FEATURE_METADATA_PATH = config.FEATURE_METADATA_PATH
+XGB_MODEL_PATH = t_config.XGB_MODEL_PATH
+LGB_MODEL_PATH = t_config.LGB_MODEL_PATH
+PREPROCESSOR_PATH = t_config.PREPROCESSOR_PATH
+METRICS_PATH = t_config.METRICS_PATH
+BEST_MODEL_PATH = t_config.BEST_MODEL_PATH
+FEATURE_METADATA_PATH = t_config.FEATURE_METADATA_PATH
 
-ARTIFACTS_DIR = config.ARTIFACTS_DIR
+ARTIFACTS_DIR = g_config.ARTIFACTS_DIR
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 
 MODEL_ARTIFACT = ARTIFACTS_DIR / "model.pkl"
