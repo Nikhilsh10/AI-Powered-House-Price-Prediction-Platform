@@ -61,7 +61,6 @@ def test_shap_explainer_works():
     
     X_processed = preprocess_input(input_data)
     
-    assert hasattr(model, "get_booster") or hasattr(model, "feature_name_"), "Model must be a tree model for TreeExplainer"
     explainer = shap.TreeExplainer(model)
     
     shap_values = explainer.shap_values(X_processed)

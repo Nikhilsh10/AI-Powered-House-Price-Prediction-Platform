@@ -51,6 +51,7 @@ def _engineer_features(df: pd.DataFrame) -> pd.DataFrame:
             except Exception:
                 return np.nan
         df["size"] = df["size"].apply(parse_size)
+        df.rename(columns={"size": "total_sqft"}, inplace=True)
     if "bhk" in df.columns and "bath" in df.columns:
         df["total_rooms"] = df["bhk"] + df["bath"]
     return df

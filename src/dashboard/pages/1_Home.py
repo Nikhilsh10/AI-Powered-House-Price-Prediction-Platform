@@ -53,7 +53,7 @@ def _confidence_gauge(lower: float, upper: float, pred: float) -> str:
     return f"""
     <div class='confidence-wrap'>
         <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;'>
-            <span style='font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:#4f5668; font-weight:600;'>
+            <span style='font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); font-weight:600;'>
                 Prediction Confidence
             </span>
             <span class='tag {tag_cls}'>{label}</span>
@@ -61,7 +61,7 @@ def _confidence_gauge(lower: float, upper: float, pred: float) -> str:
         <div class='confidence-track'>
             <div class='confidence-fill' style='width:{confidence_pct:.1f}%; background:{color};'></div>
         </div>
-        <div style='font-size:0.75rem; color:#4f5668; margin-top:0.3rem; font-family:Space Mono,monospace;'>
+        <div style='font-size:0.75rem; color:var(--text-muted); margin-top:0.3rem; font-family:IBM Plex Mono,monospace;'>
             Range: {lower:.2f}L – {upper:.2f}L
         </div>
     </div>
@@ -76,11 +76,9 @@ def render():
     st.markdown("""
     <div class='page-enter'>
     <h1 style='margin-bottom:0.2rem;'>
-        House Price <span style='background:linear-gradient(135deg,#5eead4,#fbbf24);
-        -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-        background-clip:text;'>Prediction</span>
+        House Price <span style='color:var(--accent-blue);'>Prediction</span>
     </h1>
-    <p style='color:#8a93a8; font-size:0.92rem; margin-top:0; margin-bottom:1.75rem;'>
+    <p style='color:var(--text-secondary); font-size:0.92rem; margin-top:0; margin-bottom:1.75rem;'>
         Enter property details below to get an instant price estimate
     </p>
     </div>
@@ -91,8 +89,8 @@ def render():
         st.markdown("""
         <div style='display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;'>
             <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
-                        text-transform:uppercase; color:#4f5668;'>Property Details</div>
-            <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+                        text-transform:uppercase; color:var(--text-muted);'>Property Details</div>
+            <div style='flex:1; height:1px; background:var(--border-medium);'></div>
         </div>
         """, unsafe_allow_html=True)
 

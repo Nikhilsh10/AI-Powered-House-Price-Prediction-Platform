@@ -82,12 +82,10 @@ def fmt(val, suffix="", precision=2):
 # ---------------------------------------------------------------------------
 st.markdown("""
 <div class='page-enter'>
-<h1 style='margin-bottom:0.2rem;'>
-    Analytics <span style='background:linear-gradient(135deg,#5eead4,#fbbf24);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    background-clip:text;'>Dashboard</span>
-</h1>
-<p style='color:#8a93a8; font-size:0.92rem; margin-top:0; margin-bottom:1.75rem;'>
+    <h1 style='margin-bottom:0.2rem;'>
+        Analytics <span style='color:var(--accent-blue);'>Dashboard</span>
+    </h1>
+    <p style='color:var(--text-secondary); font-size:0.92rem; margin-top:0; margin-bottom:1.75rem;'>
     Dataset statistics, price distributions, and model performance
 </p>
 </div>
@@ -99,8 +97,8 @@ st.markdown("""
 st.markdown("""
 <div style='display:flex; align-items:center; gap:0.6rem; margin:0.5rem 0 1rem;'>
     <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
-                text-transform:uppercase; color:#4f5668;'>Key Metrics</div>
-    <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+                text-transform:uppercase; color:var(--text-muted);'>Key Metrics</div>
+    <div style='flex:1; height:1px; background:var(--border-medium);'></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -143,8 +141,8 @@ st.markdown("<div style='height:1.5rem;'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div style='display:flex; align-items:center; gap:0.6rem; margin:0.5rem 0 1rem;'>
     <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
-                text-transform:uppercase; color:#4f5668;'>Price vs Area</div>
-    <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+                text-transform:uppercase; color:var(--text-muted);'>Price vs Area</div>
+    <div style='flex:1; height:1px; background:var(--border-medium);'></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -157,7 +155,7 @@ scatter_kwargs = dict(
     x=size_col,
     y="price",
     title="Price (Lakh ₹) vs Area (sqft)",
-    template="plotly_dark",
+    template="plotly_white",
     labels={size_col: "Area (sqft)", "price": "Price (Lakh ₹)"},
 )
 if "location" in df.columns:
@@ -173,8 +171,8 @@ fig_scatter.update_layout(
     legend=dict(orientation="h", y=-0.15, x=0, font=dict(size=10)),
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Space Grotesk", color="#8a93a8"),
-    title_font=dict(size=13, color="#f0f2f7"),
+    font=dict(family="IBM Plex Mono", color="#4A4A4A"),
+    title_font=dict(size=13, color="#1A1A1A"),
 )
 st.plotly_chart(fig_scatter, use_container_width=True)
 
@@ -185,8 +183,8 @@ if "location" in df.columns and n_locations > 0:
     st.markdown("""
     <div style='display:flex; align-items:center; gap:0.6rem; margin:1rem 0 1rem;'>
         <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
-                    text-transform:uppercase; color:#4f5668;'>Price by Location</div>
-        <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+                    text-transform:uppercase; color:var(--text-muted);'>Price by Location</div>
+        <div style='flex:1; height:1px; background:var(--border-medium);'></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -202,9 +200,9 @@ if "location" in df.columns and n_locations > 0:
         x="location",
         y="price",
         color="price",
-        color_continuous_scale=[[0, "#14b8a6"], [0.5, "#5eead4"], [1, "#fbbf24"]],
+        color_continuous_scale=[[0, "#E8DCC4"], [0.5, "#8B3A3A"], [1, "#3A5B72"]],
         title="Top Locations by Average Price",
-        template="plotly_dark",
+        template="plotly_white",
         labels={"location": "Location", "price": "Avg Price (Lakh ₹)"},
         text_auto=".1f",
     )
@@ -214,8 +212,8 @@ if "location" in df.columns and n_locations > 0:
         coloraxis_showscale=False,
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Space Grotesk", color="#8a93a8"),
-        title_font=dict(size=13, color="#f0f2f7"),
+        font=dict(family="IBM Plex Mono", color="#4A4A4A"),
+        title_font=dict(size=13, color="#1A1A1A"),
     )
     fig_bar.update_traces(textfont_size=10)
     st.plotly_chart(fig_bar, use_container_width=True)
@@ -226,8 +224,8 @@ if "location" in df.columns and n_locations > 0:
 st.markdown("""
 <div style='display:flex; align-items:center; gap:0.6rem; margin:1rem 0 1rem;'>
     <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
-                text-transform:uppercase; color:#4f5668;'>Price Distribution</div>
-    <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+                text-transform:uppercase; color:var(--text-muted);'>Price Distribution</div>
+    <div style='flex:1; height:1px; background:var(--border-medium);'></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -236,8 +234,8 @@ fig_hist = px.histogram(
     x="price",
     nbins=min(30, max(5, len(df) // 2)),
     title="Price Distribution (Lakh ₹)",
-    template="plotly_dark",
-    color_discrete_sequence=["#5eead4"],
+    template="plotly_white",
+    color_discrete_sequence=["#3A5B72"],
     labels={"price": "Price (Lakh ₹)", "count": "Count"},
 )
 fig_hist.update_layout(
@@ -245,8 +243,8 @@ fig_hist.update_layout(
     margin=dict(l=10, r=10, t=40, b=10),
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Space Grotesk", color="#8a93a8"),
-    title_font=dict(size=13, color="#f0f2f7"),
+    font=dict(family="IBM Plex Mono", color="#4A4A4A"),
+    title_font=dict(size=13, color="#1A1A1A"),
 )
 st.plotly_chart(fig_hist, use_container_width=True)
 
@@ -256,8 +254,8 @@ st.plotly_chart(fig_hist, use_container_width=True)
 st.markdown("""
 <div style='display:flex; align-items:center; gap:0.6rem; margin:1rem 0 1rem;'>
     <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
-                text-transform:uppercase; color:#4f5668;'>Model Performance</div>
-    <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+                text-transform:uppercase; color:var(--text-muted);'>Model Performance</div>
+    <div style='flex:1; height:1px; background:var(--border-medium);'></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -287,9 +285,7 @@ if rows:
         </tr>"""
 
     st.markdown(f"""
-    <div style='background:linear-gradient(145deg,rgba(26,30,40,0.7),rgba(13,15,20,0.9));
-                border:1px solid rgba(255,255,255,0.08); border-radius:14px;
-                overflow:hidden; margin-bottom:1rem;'>
+    <div style='border:1px solid var(--border-dark); margin-bottom:1rem;'>
         <table class='model-table'>
             <thead>
                 <tr>

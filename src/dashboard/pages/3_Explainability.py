@@ -85,11 +85,9 @@ def load_or_build_explainer():
 st.markdown("""
 <div class='page-enter'>
 <h1 style='margin-bottom:0.2rem;'>
-    Model <span style='background:linear-gradient(135deg,#5eead4,#fbbf24);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    background-clip:text;'>Explainability</span>
+    Model <span style='color:var(--accent-blue);'>Explainability</span>
 </h1>
-<p style='color:#8a93a8; font-size:0.92rem; margin-top:0; margin-bottom:1.75rem;'>
+<p style='color:var(--text-secondary); font-size:0.92rem; margin-top:0; margin-bottom:1.75rem;'>
     SHAP-based feature attribution for your latest prediction
 </p>
 </div>
@@ -101,8 +99,8 @@ st.markdown("""
 st.markdown("""
 <div style='display:flex; align-items:center; gap:0.6rem; margin:0.5rem 0 1rem;'>
     <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
-                text-transform:uppercase; color:#4f5668;'>Prediction Recap</div>
-    <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+                text-transform:uppercase; color:var(--text-muted);'>Prediction Recap</div>
+    <div style='flex:1; height:1px; background:var(--border-medium);'></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -141,8 +139,8 @@ st.markdown("<div style='height:1.5rem;'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div style='display:flex; align-items:center; gap:0.6rem; margin:0.5rem 0 1rem;'>
     <div style='font-size:0.72rem; font-weight:600; letter-spacing:0.12em;
-                text-transform:uppercase; color:#4f5668;'>SHAP Analysis</div>
-    <div style='flex:1; height:1px; background:rgba(255,255,255,0.06);'></div>
+                text-transform:uppercase; color:var(--text-muted);'>SHAP Analysis</div>
+    <div style='flex:1; height:1px; background:var(--border-medium);'></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -167,8 +165,8 @@ try:
         # Waterfall plot (single instance)
         st.subheader("Feature Impact — Waterfall")
         fig_wf, ax_wf = plt.subplots(figsize=(9, max(4, len(feature_names) * 0.35)))
-        fig_wf.patch.set_facecolor("#0d0f14")
-        ax_wf.set_facecolor("#0d0f14")
+        fig_wf.patch.set_facecolor("#F9F9F6")
+        ax_wf.set_facecolor("#F9F9F6")
 
         expected_val = (
             explainer.expected_value[0]
