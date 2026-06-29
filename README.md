@@ -1,7 +1,7 @@
 ---
 title: House Price Prediction Platform
 emoji: 🏠
-colorFrom: blue
+colorFrom: blue 
 colorTo: green
 sdk: streamlit
 app_file: src/dashboard/app.py
